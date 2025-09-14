@@ -36,7 +36,7 @@ services:
       - no-new-privileges:true  # Seguridad adicional
 
   # ============================================
-  # APLICACIÓN LARAVEL CON CONFIGURACIÓN AUTOMÁTICA
+  # APLICACIÓN LARAVEL CON CREACIÓN AUTOMÁTICA
   # ============================================
   laravel:
     image: 'bitnami/laravel:11'  # Versión específica LTS
@@ -169,25 +169,6 @@ services:
       retries: 3
       start_period: 40s
 
-  # ============================================
-  # COMPOSER (OPCIONAL - SOLO PARA DESARROLLO AVANZADO)
-  # ============================================
-  composer:
-    image: 'composer:2.7'  # Versión específica estable
-    working_dir: /app
-    volumes:
-      - './src:/app'
-      - 'vendor_data:/app/vendor'
-      - 'composer_cache:/tmp/cache'  # Cache de Composer
-    environment:
-      - COMPOSER_CACHE_DIR=/tmp/cache
-    entrypoint: ['composer']
-    command: ['install', '--no-interaction', '--prefer-dist', '--optimize-autoloader']
-    networks:
-      - laravel-network
-    profiles: ['tools']  # Solo se ejecuta cuando se especifica
-    security_opt:
-      - no-new-privileges:true
 
 # =============================================================================
 # VOLÚMENES PERSISTENTES
@@ -195,11 +176,7 @@ services:
 volumes:
   mariadb_data:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./storage/mariadb
-    # Persistencia de datos de MariaDB con ubicación controlada
+    # Persistencia de datos de MariaDB (volumen Docker gestionado)
   
   vendor_data:
     driver: local

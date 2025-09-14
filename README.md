@@ -17,63 +17,55 @@ Este setup de Docker Compose **crea e inicializa automáticamente** una instalac
 - Docker Desktop instalado y en ejecución
 - Git (opcional, para control de versiones)
 
-### ⚡ **MÁXIMA SIMPLICIDAD - 2 COMANDOS**
+### ⏳ **MÁXIMA SIMPLICIDAD - 2 COMANDOS**
 
 ```bash
 # 1. Configurar entorno (una sola vez)
 cp .env.example .env
 # (Opcional: editar .env con tus credenciales de base de datos preferidas)
 
-# 2. Iniciar todo (crea Laravel automáticamente si es necesario)
+# 2. Iniciar todo - Laravel se crea automáticamente
 docker compose up -d
 
 # ¡Eso es todo! 🎉 Laravel ejecutándose en http://localhost:8000
 ```
 
-### 🏗️ **Qué Sucede Automáticamente:**
-1. ✅ **Detecta la carpeta src/ vacía**
-2. ✅ **Descarga e instala Laravel 11.x**
-3. ✅ **Inicia MariaDB con verificaciones de salud**
-4. ✅ **Configura la conexión a la base de datos**
-5. ✅ **Genera la APP_KEY**
-6. ✅ **Ejecuta las migraciones de base de datos** 
-7. ✅ **Inicia el servidor de desarrollo de Laravel**
+### 🏗️ **Qué Sucede Automáticamente con `docker compose up`:**
 
-## 🟃‍♂️ Inicio Rápido
+1. ✅ **Inicia MariaDB** con verificaciones de salud
+2. ✅ **Detecta si src/ está vacía**
+3. ✅ **Descarga e instala Laravel 11.x** (solo si es necesario)
+4. ✅ **Instala dependencias** con Composer
+5. ✅ **Configura la conexión** a la base de datos
+6. ✅ **Genera la APP_KEY** de Laravel
+7. ✅ **Ejecuta las migraciones** de base de datos
+8. ✅ **Inicia el servidor** de desarrollo de Laravel
 
-### Requisitos Previos
-- Docker Desktop instalado y en ejecución
-- Git (opcional, para control de versiones)
-
-### 📝 Pasos Alternativos
+## 📋 Comandos Adicionales (Opcionales)
 
 ```bash
-# Opción 1: Usando Make (recomendado)
-make start
+# Detener servicios
+docker compose down
 
-# Opción 2: Usando Docker Compose directamente
+# Ver registros
+docker compose logs laravel
+
+# Reiniciar completamente
+docker compose down -v
 docker compose up -d
 ```
-
-**¡Es así de simple!** El sistema detecta automáticamente si necesita crear Laravel.
 
 ## 🗂️ Estructura del Proyecto
 
 ```
 infotec/
-├── src/                    # Aplicación Laravel (creada automáticamente)
-├── scripts/                # Scripts de utilidad
-│   └── verificar-entorno.sh   # Script de verificación completa
-├── storage/                # Datos persistentes
-│   └── mariadb/               # Datos MariaDB (generado automáticamente)
-├── backups/                # Backups de base de datos
-├── docker-compose.yml     # Definición de servicios
-├── .env                   # Variables de entorno (crear desde .env.example)
-├── .env.example           # Plantilla de variables de entorno
-├── Makefile               # Comandos simplificados
+├── src/                    # Laravel (creado automáticamente con docker compose up)
+├── docker-compose.yml     # Configuración principal - TODO EN UNO
+├── .env                   # Variables de entorno (copiar de .env.example)
+├── .env.example           # Plantilla de configuración
 ├── .gitignore             # Archivos a ignorar en Git
 ├── .dockerignore          # Archivos a ignorar en Docker
-└── README.md              # Este archivo
+└── README.md              # Documentación
 ```
 
 ## 🐳 Servicios Docker
@@ -83,44 +75,19 @@ infotec/
 | **laravel** | Aplicación Laravel con PHP | 8000 |
 | **mariadb** | Servidor de base de datos | 3306 |
 
-## 🛠️ Comandos de Desarrollo
+## 🛠️ Comandos Útiles de Desarrollo
 
-### Usando Make (Recomendado)
 ```bash
-# COMANDOS PRINCIPALES
-make help              # Mostrar todos los comandos disponibles
-make start             # Iniciar entorno (crea Laravel automáticamente)
-make stop              # Detener servicios
-make restart           # Reiniciar servicios
-make status            # Estado detallado con uso de recursos
-
-# DESARROLLO
-make shell             # Acceder al contenedor Laravel
-make artisan CMD       # Ejecutar comando artisan (ej: make artisan migrate)
-make composer-install  # Instalar dependencias PHP
-make composer-update   # Actualizar dependencias PHP
-
-# MONITOREO
-make logs              # Ver registros de Laravel
-make logs-db           # Ver registros de MariaDB
-
-# MANTENIMIENTO
-make backup            # Crear backup de base de datos
-make check             # Verificar estado completo del entorno
-make clean             # Eliminar todo (contenedores y datos)
-```
-
-### Usando Docker Compose Directamente
-```bash
-# Ver registros
-docker compose logs laravel
-
-# Acceder al contenedor
+# Acceder al contenedor Laravel
 docker compose exec laravel bash
 
 # Ejecutar comandos artisan
 docker compose exec laravel php artisan migrate
 docker compose exec laravel php artisan make:controller HomeController
+docker compose exec laravel php artisan tinker
+
+# Ver registros en tiempo real
+docker compose logs -f laravel
 ```
 
 ## 🤖 Funciones Automáticas
@@ -139,20 +106,16 @@ El entorno maneja automáticamente:
 
 ### ¿Laravel no se creó?
 ```bash
-# Reiniciar servicios
-make restart
+# Ver los registros para diagnóstico
+docker compose logs laravel
 
-# Ver registros para diagnosticar
-make logs
+# Reiniciar servicios
+docker compose restart laravel
 ```
 
-### ¿¿Problemas de conexión a la base de datos?
+### ¿Problemas de conexión a la base de datos?
 ```bash
-# Verificar todo el entorno con un comando
-make check
-
 # Verificar registros de MariaDB
-make logs-db
 docker compose logs mariadb
 
 # Verificar variables de entorno
@@ -162,8 +125,8 @@ cat .env
 ### ¿Reinicio completo?
 ```bash
 # Eliminar todo y empezar de cero
-make clean
-make start  # Reinicializar
+docker compose down -v
+docker compose up -d
 ```
 
 ## 📁 Variables de Entorno (.env)
@@ -180,11 +143,38 @@ LARAVEL_VERSION=11.*
 COMPOSE_PROJECT_NAME=infotec
 ```
 
+## 🌐 **GitHub Codespaces (Recomendado)**
+
+### ⏳ **Setup con Codespaces Secrets:**
+1. **Configurar secrets** en: `Settings → Secrets and variables → Codespaces`
+2. **Agregar variables**:
+   ```
+   MARIADB_DATABASE = infotec_laravel
+   MARIADB_USER = usuario_laravel
+   LARAVEL_VERSION = 11.*
+   ```
+3. **Agregar secrets**:
+   ```
+   MARIADB_PASSWORD = tu_password_seguro
+   MARIADB_ROOT_PASSWORD = root_password
+   ```
+4. **Abrir Codespace** - ¡Todo se configura automáticamente!
+5. **Ejecutar**: `docker compose up -d`
+
+### ✨ **Ventajas de Codespaces:**
+- ✅ **Sin configuración manual** de `.env`
+- ✅ **Secrets seguros** nunca en código
+- ✅ **Colaboración fácil** con el equipo
+- ✅ **Entorno consistente** para todos
+
+---
+
 ## 🔒 Notas de Seguridad
 
 - ⚠️ **Nunca commitear `.env`** - Contiene credenciales sensibles
-- 🔑 **Cambiar passwords por defecto** en `.env` antes de producción
+- 🔑 **Usar Codespaces Secrets** para credenciales en la nube
 - 🏠 **Solo desarrollo** - Este entorno es para desarrollo, no producción
+
 
 ## 🔗 Enlaces Útiles
 

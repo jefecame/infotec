@@ -1,6 +1,0 @@
-# Directorio para almacenamiento de datos persistentes Docker
-
-Este directorio contiene los volúmenes persistentes de Docker:
-- mariadb/: Datos de MariaDB
-
-No eliminar este directorio.

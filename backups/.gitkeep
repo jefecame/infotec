@@ -1,6 +1,0 @@
-# Directorio para backups de base de datos
-
-Los backups creados con `make backup` se almacenan aquí.
-Formato: backup_YYYYMMDD_HHMMSS.sql
-
-No eliminar este directorio.
