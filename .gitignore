@@ -64,3 +64,42 @@ docker-compose.override.yml
 # Misc
 Homestead.json
 Homestead.yaml
+
+
+# Laravel: evitar commitear artefactos y dependencias
+/vendor
+/node_modules
+/.env
+.env.*.local
+
+/storage/*
+!/storage/.gitignore
+
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+/public/storage
+/public/hot
+/public/build
+
+# Testing / coverage / logs
+*.log
+.phpunit.result.cache
+/.phpunit.cache
+coverage/
+coverage.xml
+
+# SPDX / license scanner outputs
+.spdx-*
+*.spdx
+*.spdx.json
+.spdx-laravel.*
+
+# OS / editors
+.DS_Store
+Thumbs.db
+/.idea
+/.vscode
+
+*
+!.gitignore
