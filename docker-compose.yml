@@ -1,12 +1,26 @@
 version: '3.8'
 
+# =============================================================================
+# INFOTEC - Entorno de Desarrollo Laravel con Docker
+# =============================================================================
+# Propósito: Crear automáticamente una instalación Laravel desde cero
+# Uso: docker compose up -d
+# Resultado: Laravel funcionando en http://localhost:8000
+# =============================================================================
+
 services:
+  # ============================================
+  # BASE DE DATOS MARIADB
+  # ============================================
   mariadb:
     image: 'bitnami/mariadb:latest'
+    container_name: infotec_mariadb
     env_file:
       - .env
     environment:
       - ALLOW_EMPTY_PASSWORD=no
+      # Variables de entorno cargadas desde .env:
+      # MARIADB_DATABASE, MARIADB_USER, MARIADB_PASSWORD, MARIADB_ROOT_PASSWORD
     volumes:
       - mariadb_data:/bitnami/mariadb
     restart: unless-stopped
@@ -17,41 +31,131 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
-  # Laravel project initializer - runs once to create project if needed
-  laravel-init:
-    image: 'composer:latest'
-    working_dir: /workspace
-    volumes:
-      - './src:/workspace'
-      - 'vendor_data:/workspace/vendor'
-      - './scripts:/scripts'
-    environment:
-      - LARAVEL_VERSION=${LARAVEL_VERSION:-11.*}
-    command: ["/scripts/init-laravel.sh"]
-    networks:
-      - laravel-network
-    profiles: ["init"]  # Only run when specifically requested
-
-  # Application service with proper startup logic
-  application:
+  # ============================================
+  # APLICACIÓN LARAVEL CON AUTO-INICIALIZACIÓN
+  # ============================================
+  laravel:
     image: 'bitnami/laravel:latest'
+    container_name: infotec_laravel
     env_file:
       - .env
     environment:
+      # Configuración de conexión a la base de datos
       - LARAVEL_DATABASE_TYPE=mysql
       - LARAVEL_DATABASE_HOST=mariadb
       - LARAVEL_DATABASE_PORT_NUMBER=3306
       - LARAVEL_DATABASE_NAME=${MARIADB_DATABASE}
       - LARAVEL_DATABASE_USER=${MARIADB_USER}
       - LARAVEL_DATABASE_PASSWORD=${MARIADB_PASSWORD}
+      # Configuración adicional de Laravel
+      - LARAVEL_VERSION=${LARAVEL_VERSION:-11.*}
     ports:
       - '8000:8000'
     volumes:
-      - './src:/app:cached'
-      - 'vendor_data:/app/vendor'
-      - './scripts:/scripts'
-    command: ["/scripts/start-application.sh"]
+      - './src:/app'  # Monta la carpeta src como aplicación Laravel
+    # Script personalizado que:
+    # 1. Detecta si src/ está vacío
+    # 2. Crea proyecto Laravel automáticamente
+    # 3. Configura la base de datos
+    # 4. Ejecuta migraciones
+    # 5. Inicia el servidor Laravel
+    command: >
+      bash -c "
+        echo '🚀 INICIANDO ENTORNO LARAVEL INFOTEC...'
+        
+        # Esperar a que MariaDB esté listo
+        echo '⏳ Esperando conexión a MariaDB...'
+        timeout=60
+        while [ \$$timeout -gt 0 ]; do
+          if mysqladmin ping -h mariadb -u \$$LARAVEL_DATABASE_USER -p\$$LARAVEL_DATABASE_PASSWORD --silent 2>/dev/null; then
+            echo '✅ MariaDB está listo!'
+            break
+          fi
+          echo '⏳ Esperando MariaDB... (\$$timeout segundos restantes)'
+          sleep 2
+          timeout=\$$((timeout-2))
+        done
+        
+        if [ \$$timeout -le 0 ]; then
+          echo '❌ Error: No se pudo conectar a MariaDB'
+          exit 1
+        fi
+        
+        cd /app
+        
+        # Verificar si Laravel ya existe
+        if [ ! -f 'artisan' ] || [ ! -f 'composer.json' ]; then
+          echo '📁 Carpeta src/ vacía o sin Laravel. Creando proyecto...'
+          
+          # Crear proyecto Laravel en directorio temporal
+          echo '🏗️ Descargando Laravel \$$LARAVEL_VERSION...'
+          composer create-project laravel/laravel:\$$LARAVEL_VERSION /tmp/laravel-temp --prefer-dist --no-interaction --no-dev
+          
+          # Mover archivos a /app (preservando .gitignore si existe)
+          echo '📦 Instalando Laravel en /app...'
+          if [ -f '/app/.gitignore' ]; then
+            mv /app/.gitignore /tmp/backup-gitignore
+          fi
+          
+          cp -r /tmp/laravel-temp/. /app/
+          
+          if [ -f '/tmp/backup-gitignore' ]; then
+            mv /tmp/backup-gitignore /app/.gitignore
+          fi
+          
+          rm -rf /tmp/laravel-temp
+          echo '✅ Laravel instalado correctamente!'
+        else
+          echo '✅ Proyecto Laravel detectado'
+        fi
+        
+        # Instalar dependencias si es necesario
+        if [ ! -d 'vendor' ] || [ ! -f 'vendor/autoload.php' ]; then
+          echo '📦 Instalando dependencias de Composer...'
+          composer install --no-interaction --prefer-dist --optimize-autoloader
+        fi
+        
+        # Configurar archivo .env de Laravel
+        echo '⚙️ Configurando entorno Laravel...'
+        if [ ! -f '.env' ]; then
+          cp .env.example .env
+        fi
+        
+        # Actualizar configuración de base de datos en .env de Laravel
+        sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env
+        sed -i 's/DB_HOST=.*/DB_HOST=mariadb/' .env
+        sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
+        sed -i \"s/DB_DATABASE=.*/DB_DATABASE=\$$LARAVEL_DATABASE_NAME/\" .env
+        sed -i \"s/DB_USERNAME=.*/DB_USERNAME=\$$LARAVEL_DATABASE_USER/\" .env
+        sed -i \"s/DB_PASSWORD=.*/DB_PASSWORD=\$$LARAVEL_DATABASE_PASSWORD/\" .env
+        
+        # Generar clave de aplicación si no existe
+        if ! grep -q 'APP_KEY=base64:' .env; then
+          echo '🔑 Generando clave de aplicación...'
+          php artisan key:generate --force
+        fi
+        
+        # Ejecutar migraciones
+        echo '🗄️ Ejecutando migraciones de base de datos...'
+        php artisan migrate --force
+        
+        # Limpiar y optimizar
+        echo '🧹 Optimizando Laravel...'
+        php artisan config:clear
+        php artisan cache:clear
+        php artisan config:cache
+        
+        # Configurar permisos
+        chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+        
+        echo '🎉 ¡Laravel listo!'
+        echo '🌐 Aplicación disponible en: http://localhost:8000'
+        
+        # Iniciar servidor Laravel
+        exec php artisan serve --host=0.0.0.0 --port=8000
+      "
     depends_on:
       mariadb:
         condition: service_healthy
@@ -59,26 +163,19 @@ services:
     networks:
       - laravel-network
 
-  # Standalone composer service for manual operations
-  composer:
-    image: 'composer:latest'
-    working_dir: /app
-    volumes:
-      - './src:/app'
-      - 'vendor_data:/app/vendor'
-    entrypoint: ['composer']
-    command: ['install', '--no-interaction', '--prefer-dist', '--optimize-autoloader']
-    networks:
-      - laravel-network
-    profiles: ["tools"]  # Only run when manually invoked
-
+# =============================================================================
+# VOLÚMENES PERSISTENTES
+# =============================================================================
 volumes:
   mariadb_data:
     driver: local
-  vendor_data:
-    driver: local
+    # Almacena datos de MariaDB de forma persistente
 
+# =============================================================================
+# RED INTERNA
+# =============================================================================
 networks:
   laravel-network:
     driver: bridge
+    # Red interna para comunicación entre contenedores
     

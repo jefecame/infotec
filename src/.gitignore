@@ -1,0 +1,11 @@
+# =============================================================================
+# INFOTEC - Carpeta SRC (Laravel se crea automáticamente)
+# =============================================================================
+# Esta carpeta se mantiene vacía hasta que Docker Compose cree el proyecto Laravel
+# No eliminar este archivo - mantiene la carpeta en Git
+# =============================================================================
+
+# Permitir que Laravel se instale aquí automáticamente
+# El contenido se genera por Docker Compose al ejecutar "make start"
+*
+!.gitignore

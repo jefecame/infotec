@@ -1,171 +1,160 @@
-# 🚀 Infotec - Laravel Docker Development Environment
+# 🚀 INFOTEC - Entorno de Desarrollo Laravel con Docker
 
-This Docker Compose setup automatically creates a fresh Laravel installation in an empty `src/` folder and sets up a complete development environment with MariaDB.
+Este entorno Docker Compose crea automáticamente una instalación fresca de Laravel en la carpeta `src/` vacía y configura un entorno completo de desarrollo con MariaDB.
 
-## ✨ Features
+## ✨ Características
 
-- 🏗️ **Automatic Laravel Creation**: Creates a fresh Laravel project if `src/` is empty
-- 🐳 **Docker-based Development**: Complete containerized environment
-- 🗄️ **Database Integration**: Pre-configured MariaDB with automatic migrations
-- 🔑 **Environment Management**: Secure credential handling
-- 🛠️ **Development Tools**: Integrated Composer, Artisan, and more
+- 🏗️ **Creación Automática de Laravel**: Crea un proyecto Laravel nuevo si `src/` está vacío
+- 🐳 **Desarrollo con Docker**: Entorno completamente containerizado
+- 🗄️ **Integración de Base de Datos**: MariaDB preconfigurado con migraciones automáticas
+- 🔑 **Gestión de Variables**: Manejo seguro de credenciales
+- 🛠️ **Herramientas Integradas**: Composer, Artisan, y más
 
-## 🏃‍♂️ Quick Start
+## 🏃‍♂️ Inicio Rápido
 
-### Prerequisites
-- Docker Desktop installed and running
-- Git (optional, for version control)
+### Requisitos Previos
+- Docker Desktop instalado y en ejecución
+- Git (opcional, para control de versiones)
 
-### 🔄 One-Command Setup
+### 🚀 Configuración en Un Comando
 
 ```bash
-# 1. Copy and configure environment
+# 1. Copiar y configurar variables de entorno
 cp .env.example .env
-# Edit .env with your preferred database credentials
+# Editar .env con tus credenciales de base de datos preferidas
 
-# 2. Initialize everything (creates Laravel + starts services)
-make init
+# 2. Iniciar todo (crea Laravel + inicia servicios)
+make start
 
-# That's it! Open http://localhost:8000
+# ¡Listo! Abrir http://localhost:8000
 ```
 
-### 📝 Manual Step-by-Step
+### 📝 Pasos Manuales Alternativos
 
-1. **Environment Setup**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database credentials
-   ```
+```bash
+# Opción 1: Usando Make (recomendado)
+make start
 
-2. **Create Laravel Project** (if src/ is empty)
-   ```bash
-   docker compose --profile init up laravel-init
-   ```
+# Opción 2: Usando Docker Compose directamente
+docker compose up -d
+```
 
-3. **Start All Services**
-   ```bash
-   docker compose up -d
-   ```
+**¡Es así de simple!** El sistema detecta automáticamente si necesita crear Laravel.
 
-4. **Access Your Application**
-   - Laravel App: http://localhost:8000
-   - Database: localhost:3306
-
-## 🗂️ Project Structure
+## 🗂️ Estructura del Proyecto
 
 ```
 infotec/
-├── src/                    # Laravel application (auto-created)
-├── scripts/               # Initialization scripts
-│   ├── init-laravel.sh    # Laravel project creator
-│   └── start-application.sh # App startup logic
-├── docker-compose.yml     # Service definitions
-├── .env                   # Environment variables (create from .env.example)
-├── .env.example           # Environment template
-├── Makefile               # Development shortcuts
-└── README.md              # This file
+├── src/                    # Aplicación Laravel (creada automáticamente)
+├── docker-compose.yml     # Definición de servicios
+├── .env                   # Variables de entorno (crear desde .env.example)
+├── .env.example           # Plantilla de variables de entorno
+├── Makefile               # Comandos simplificados
+├── .gitignore             # Archivos a ignorar en Git
+├── .dockerignore          # Archivos a ignorar en Docker
+└── README.md              # Este archivo
 ```
 
-## 🗂️ Docker Services
+## 🐳 Servicios Docker
 
-| Service | Description | Port |
-|---------|-------------|------|
-| **application** | Laravel app with PHP-FPM | 8000 |
-| **mariadb** | Database server | 3306 |
-| **laravel-init** | Laravel project initializer | - |
-| **composer** | Dependency manager | - |
+| Servicio | Descripción | Puerto |
+|----------|-------------|--------|
+| **laravel** | Aplicación Laravel con PHP | 8000 |
+| **mariadb** | Servidor de base de datos | 3306 |
 
-## 🛠️ Development Commands
+## 🛠️ Comandos de Desarrollo
 
-### Using Make (Recommended)
+### Usando Make (Recomendado)
 ```bash
-make help           # Show all available commands
-make init           # Initialize Laravel + start services
-make up             # Start services
-make down           # Stop services  
-make restart        # Restart services
-make logs           # View application logs
-make shell          # Access Laravel container
-make composer       # Run composer install
-make artisan CMD    # Run artisan command
-make clean          # Remove all containers and data
-make status         # Show container status
+make help           # Mostrar todos los comandos disponibles
+make start          # Iniciar entorno (crea Laravel automáticamente)
+make stop           # Detener servicios
+make restart        # Reiniciar servicios
+make logs           # Ver registros de Laravel
+make shell          # Acceder al contenedor Laravel
+make artisan CMD    # Ejecutar comando artisan
+make clean          # Eliminar todo (contenedores y datos)
+make status         # Mostrar estado de contenedores
 ```
 
-### Using Docker Compose Directly
+### Usando Docker Compose Directamente
 ```bash
-# View logs
-docker compose logs application
+# Ver registros
+docker compose logs laravel
 
-# Access container shell
-docker compose exec application bash
+# Acceder al contenedor
+docker compose exec laravel bash
 
-# Run artisan commands
-docker compose exec application php artisan migrate
-docker compose exec application php artisan make:controller HomeController
-
-# Run composer
-docker compose --profile tools run --rm composer
+# Ejecutar comandos artisan
+docker compose exec laravel php artisan migrate
+docker compose exec laravel php artisan make:controller HomeController
 ```
 
-## 🗂️ Automatic Features
+## 🤖 Funciones Automáticas
 
-The setup automatically handles:
+El entorno maneja automáticamente:
 
-- ✅ **Laravel Installation**: Creates Laravel 11.x if src/ is empty
-- ✅ **Database Configuration**: Configures Laravel to use MariaDB
-- ✅ **Environment Setup**: Generates APP_KEY and configures .env
-- ✅ **Database Migration**: Runs initial migrations
-- ✅ **Dependency Installation**: Installs Composer packages
-- ✅ **Permission Management**: Sets correct file permissions
-- ✅ **Health Checks**: Ensures database connectivity
+- ✅ **Instalación Laravel**: Crea Laravel 11.x si src/ está vacío
+- ✅ **Configuración de BD**: Configura Laravel para usar MariaDB
+- ✅ **Configuración del Entorno**: Genera APP_KEY y configura .env
+- ✅ **Migraciones**: Ejecuta migraciones iniciales de base de datos
+- ✅ **Dependencias**: Instala paquetes de Composer
+- ✅ **Permisos**: Establece permisos correctos de archivos
+- ✅ **Optimización**: Limpia y optimiza Laravel
 
-## 🐛 Troubleshooting
+## 🐛 Solución de Problemas
 
-### Laravel project not created?
+### ¿Laravel no se creó?
 ```bash
-# Run initialization manually
-docker compose --profile init up laravel-init
-```
-
-### Application not starting?
-```bash
-# Check logs
-docker compose logs application
-
-# Restart services
+# Reiniciar servicios
 make restart
+
+# Ver registros para diagnosticar
+make logs
 ```
 
-### Database connection issues?
+### ¿¿Problemas de conexión a la base de datos?
 ```bash
-# Check MariaDB logs
+# Verificar registros de MariaDB
 docker compose logs mariadb
 
-# Verify environment variables
+# Verificar variables de entorno
 cat .env
 ```
 
-### Clean slate reset?
+### ¿Reinicio completo?
 ```bash
-# Remove everything and start fresh
+# Eliminar todo y empezar de cero
 make clean
-rm -rf src/*  # Remove Laravel files
-make init     # Reinitialize
+make start  # Reinicializar
 ```
 
-## 🔒 Security Notes
+## 📁 Variables de Entorno (.env)
 
-- ⚠️ **Never commit `.env`** - Contains sensitive credentials
-- 🔑 **Change default passwords** in `.env` before production use
-- 🏠 **Development only** - This setup is for development, not production
+```bash
+# Variables de MariaDB
+MARIADB_DATABASE=infotec_db
+MARIADB_USER=usuario_laravel
+MARIADB_PASSWORD=tu_password_seguro
+MARIADB_ROOT_PASSWORD=root_password_seguro
 
-## 🔗 Useful Links
+# Configuración adicional
+LARAVEL_VERSION=11.*
+COMPOSE_PROJECT_NAME=infotec
+```
 
-- [Laravel Documentation](https://laravel.com/docs)
-- [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [MariaDB Documentation](https://mariadb.org/documentation/)
+## 🔒 Notas de Seguridad
+
+- ⚠️ **Nunca commitear `.env`** - Contiene credenciales sensibles
+- 🔑 **Cambiar passwords por defecto** en `.env` antes de producción
+- 🏠 **Solo desarrollo** - Este entorno es para desarrollo, no producción
+
+## 🔗 Enlaces Útiles
+
+- [Documentación Laravel](https://laravel.com/docs)
+- [Documentación Docker Compose](https://docs.docker.com/compose/)
+- [Documentación MariaDB](https://mariadb.org/documentation/)
 
 ---
 
-**Happy coding!** 🚀 If you encounter any issues, check the logs or create an issue in the repository.
+**¡Feliz programación!** 🚀 Si encuentras algún problema, revisa los logs o crea un issue en el repositorio.

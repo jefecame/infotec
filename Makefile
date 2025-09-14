@@ -1,63 +1,66 @@
-.PHONY: help init up down restart logs shell composer artisan clean status
+.PHONY: help start stop restart logs shell artisan clean status
 
-# Default target
+# =============================================================================
+# INFOTEC - Comandos Laravel Docker
+# =============================================================================
+# Todos los comandos están en español y simplificados
+# El comando principal es: make start (equivale a docker compose up -d)
+# =============================================================================
+
+# Comando por defecto - muestra ayuda
 help:
-	@echo "🚀 Infotec Laravel Docker Commands"
-	@echo "====================================="
-	@echo "make init        - Initialize Laravel project and start services"
-	@echo "make up          - Start all services"
-	@echo "make down        - Stop all services"
-	@echo "make restart     - Restart all services"
-	@echo "make logs        - View application logs"
-	@echo "make shell       - Access Laravel container shell"
-	@echo "make composer    - Run composer install"
-	@echo "make artisan CMD - Run artisan command (e.g., make artisan migrate)"
-	@echo "make clean       - Stop services and remove all data"
-	@echo "make status      - Show running containers"
+	@echo "🚀 INFOTEC - Comandos Laravel Docker"
+	@echo "========================================"
+	@echo "make start       - Iniciar entorno (crea Laravel automaticamente)"
+	@echo "make stop        - Detener servicios"
+	@echo "make restart     - Reiniciar servicios"
+	@echo "make logs        - Ver registros de Laravel"
+	@echo "make shell       - Acceder al contenedor Laravel"
+	@echo "make artisan CMD - Ejecutar comando artisan (ej: make artisan migrate)"
+	@echo "make clean       - Eliminar todo (contenedores y datos)"
+	@echo "make status      - Mostrar estado de contenedores"
+	@echo ""
+	@echo "🌐 Después de 'make start', abrir: http://localhost:8000"
 
-# Initialize project (create Laravel if needed, then start services)
-init:
-	@echo "🏗️  Initializing Laravel project..."
-	@if [ ! -f "src/composer.json" ]; then \
-		echo "📁 Creating new Laravel project..."; \
-		docker compose --profile init up --build laravel-init; \
-	fi
-	@echo "🐳 Starting services..."
-	@docker compose up -d --build
-	@echo "✅ Setup completed! Application available at: http://localhost:8000"
-
-# Start services
-up:
+# Iniciar entorno completo (crea Laravel si es necesario)
+start:
+	@echo "🚀 Iniciando entorno Laravel Infotec..."
 	docker compose up -d
+	@echo "✅ Servicios iniciados. Laravel disponible en: http://localhost:8000"
 
-# Stop services
-down:
+# Detener servicios
+stop:
+	@echo "🚨 Deteniendo servicios..."
 	docker compose down
+	@echo "✅ Servicios detenidos"
 
-# Restart services
-restart: down up
+# Reiniciar servicios
+restart: stop start
 
-# View logs
+# Ver registros de Laravel
 logs:
-	docker compose logs -f application
+	@echo "📝 Mostrando registros de Laravel (Ctrl+C para salir):"
+	docker compose logs -f laravel
 
-# Access container shell
+# Acceder al contenedor Laravel
 shell:
-	docker compose exec application bash
+	@echo "💻 Accediendo al contenedor Laravel..."
+	docker compose exec laravel bash
 
-# Run composer install
-composer:
-	docker compose --profile tools run --rm composer
-
-# Run artisan commands
+# Ejecutar comandos artisan
 artisan:
-	docker compose exec application php artisan $(CMD)
+	@echo "⚙️ Ejecutando: php artisan $(CMD)"
+	docker compose exec laravel php artisan $(CMD)
 
-# Clean up everything
+# Limpiar todo el entorno
 clean:
+	@echo "🧹 Eliminando todos los contenedores y datos..."
 	docker compose down -v --remove-orphans
-	docker system prune -f
+	@echo "📁 Eliminando carpeta src/..."
+	@if [ -d "src" ]; then rm -rf src/*; fi
+	@echo "✅ Entorno limpio. Usar 'make start' para reinicializar"
 
-# Show status
+# Mostrar estado
 status:
+	@echo "📈 Estado de los contenedores:"
 	docker compose ps

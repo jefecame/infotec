@@ -1,60 +1,91 @@
-# Entorno
+# =============================================================================
+# INFOTEC - Archivos a Ignorar en Git
+# =============================================================================
+# Configurado para proyecto Laravel con Docker
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# VARIABLES DE ENTORNO Y CREDENCIALES
+# -----------------------------------------------------------------------------
 .env
 .env.*.backup
 .env.*.local
+auth.json
 
-# Dependencias
+# -----------------------------------------------------------------------------
+# DEPENDENCIAS Y PAQUETES
+# -----------------------------------------------------------------------------
 /vendor
 /node_modules
 /src/vendor
 /src/node_modules
 
-# Laravel / build / public
+# -----------------------------------------------------------------------------
+# ARCHIVOS GENERADOS POR LARAVEL
+# -----------------------------------------------------------------------------
+# Build y archivos públicos
 /public/build
 /public/hot
 /public/storage
 
-# Laravel folders a ignorar dentro de src
+# Storage y cache de Laravel (dentro de src/)
 /src/storage/*
 !/src/storage/.gitignore
-
 /src/bootstrap/cache/*
 !/src/bootstrap/cache/.gitignore
 
+# -----------------------------------------------------------------------------
+# BASES DE DATOS Y LOGS
+# -----------------------------------------------------------------------------
 # SQLite
 *.sqlite*
 database/*.sqlite*
 
-# Logs y caches
+# Logs y reportes
 *.log
 .phpunit.result.cache
 /.phpunit.cache
 coverage/
 coverage.xml
 
-# SPDX / scanner outputs (evita errores "Invalid argument")
+# -----------------------------------------------------------------------------
+# HERRAMIENTAS DE DESARROLLO
+# -----------------------------------------------------------------------------
+# SPDX scanner (evita errores en herramientas de análisis)
 .spdx-*
 *.spdx
 *.spdx.json
 src/.spdx-laravel.json
 
-# Keys / secrets
+# Claves y secretos
 /storage/*.key
-auth.json
 
-# Editor/IDE y OS
+# -----------------------------------------------------------------------------
+# EDITORES E IDES
+# -----------------------------------------------------------------------------
 /.idea
 /.vscode
 /.phpactor.json
 /.fleet
 /.zed
-.DS_Store
-Thumbs.db
 
-# Docker overrides
+# -----------------------------------------------------------------------------
+# SISTEMAS OPERATIVOS
+# -----------------------------------------------------------------------------
+.DS_Store      # macOS
+Thumbs.db      # Windows
+
+# -----------------------------------------------------------------------------
+# DOCKER
+# -----------------------------------------------------------------------------
 docker-compose.override.yml
 .docker-compose.*.yml
 
-# Misc
+# -----------------------------------------------------------------------------
+# OTROS
+# -----------------------------------------------------------------------------
 Homestead.json
 Homestead.yaml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
