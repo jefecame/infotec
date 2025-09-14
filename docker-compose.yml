@@ -42,7 +42,7 @@ services:
       - laravel-network
 
   composer:
-    image: 'composer:2'
+    image: 'composer:latest'
     working_dir: /app
     volumes:
       - './src:/app'
