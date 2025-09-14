@@ -78,10 +78,17 @@ src/*.spdx*
 Thumbs.db      # Windows
 
 # -----------------------------------------------------------------------------
-# DOCKER
+# DOCKER Y DATOS PERSISTENTES
 # -----------------------------------------------------------------------------
 docker-compose.override.yml
 .docker-compose.*.yml
+
+# Datos de MariaDB (volumen Docker)
+storage/mariadb/
+
+# Backups de base de datos
+backups/*.sql
+!backups/.gitkeep
 
 # -----------------------------------------------------------------------------
 # OTROS
