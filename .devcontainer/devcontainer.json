@@ -1,0 +1,22 @@
+{
+  "name": "Infotec (docker-compose)",
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
+  "service": "application",
+  "workspaceFolder": "/app",
+  "runServices": [
+    "mariadb",
+    "application"
+  ],
+  "shutdownAction": "stopCompose",
+  "forwardPorts": [
+    8000
+  ],
+  "postCreateCommand": "composer install --no-interaction || true && php artisan key:generate --force || true",
+  "extensions": [
+    "bmewburn.vscode-intelephense-client",
+    "felixfbecker.php-debug"
+  ],
+  "remoteUser": "1001"
+}
