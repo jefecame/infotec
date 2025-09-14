@@ -18,6 +18,22 @@ services:
       timeout: 5s
       retries: 5
 
+  # Laravel project initializer - runs once to create project if needed
+  laravel-init:
+    image: 'composer:latest'
+    working_dir: /workspace
+    volumes:
+      - './src:/workspace'
+      - 'vendor_data:/workspace/vendor'
+      - './scripts:/scripts'
+    environment:
+      - LARAVEL_VERSION=${LARAVEL_VERSION:-11.*}
+    command: ["/scripts/init-laravel.sh"]
+    networks:
+      - laravel-network
+    profiles: ["init"]  # Only run when specifically requested
+
+  # Application service with proper startup logic
   application:
     image: 'bitnami/laravel:latest'
     env_file:
@@ -32,15 +48,18 @@ services:
     ports:
       - '8000:8000'
     volumes:
-      - './src:/app:cached'        # monta tu código fuente
-      - 'vendor_data:/app/vendor'  # volumen nombrado para vendor (evita que bind mount lo oculte)
-    command: ['php','artisan','serve','--host=0.0.0.0','--port=8000']
+      - './src:/app:cached'
+      - 'vendor_data:/app/vendor'
+      - './scripts:/scripts'
+    command: ["/scripts/start-application.sh"]
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - laravel-network
 
+  # Standalone composer service for manual operations
   composer:
     image: 'composer:latest'
     working_dir: /app
@@ -51,6 +70,7 @@ services:
     command: ['install', '--no-interaction', '--prefer-dist', '--optimize-autoloader']
     networks:
       - laravel-network
+    profiles: ["tools"]  # Only run when manually invoked
 
 volumes:
   mariadb_data:
