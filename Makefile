@@ -1,7 +1,7 @@
 .PHONY: help start stop restart logs shell artisan clean status
 
 # =============================================================================
-# INFOTEC - Comandos Laravel Docker
+# INFOTEC - Comandos Laravel Docker (Makefile)
 # =============================================================================
 # Todos los comandos están en español y simplificados
 # El comando principal es: make start (equivale a docker compose up -d)

@@ -1,7 +1,7 @@
 version: '3.8'
 
 # =============================================================================
-# INFOTEC - Entorno de Desarrollo Laravel con Docker
+# INFOTEC - Entorno de Desarrollo Laravel con Docker (docker-compose.yml)
 # =============================================================================
 # Propósito: Crear automáticamente una instalación Laravel desde cero
 # Uso: docker compose up -d

@@ -1,5 +1,5 @@
 # =============================================================================
-# INFOTEC - Archivos a Ignorar en Contexto Docker
+# INFOTEC - Archivos a Ignorar en Contexto Docker (.dockerignore)
 # =============================================================================
 # Evita copiar archivos innecesarios al contexto de construcción Docker
 # Mejora el rendimiento y reduce el tamaño del contexto
