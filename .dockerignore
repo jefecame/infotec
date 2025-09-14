@@ -1,0 +1,9 @@
+# Evita copiar artefactos grandes / privados al build context
+.git
+.gitignore
+.env
+.env.*
+node_modules
+vendor
+*.log
+.DS_Store
