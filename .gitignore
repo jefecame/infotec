@@ -1,0 +1,62 @@
+# Entorno
+.env
+.env.*.backup
+.env.*.local
+
+# Dependencias
+/node_modules
+/vendor
+
+# Build / public
+/public/build
+/public/hot
+/public/storage
+
+# Laravel folders to ignore excepto .gitignore markers
+/storage/*
+!/storage/.gitignore
+
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# SQLite
+*.sqlite*
+database/*.sqlite*
+
+# Logs y caches
+*.log
+.phpunit.result.cache
+/.phpunit.cache
+coverage/
+coverage.xml
+
+# SPDX / license scanner outputs (evita errores como "Invalid argument")
+.spdx-*
+*.spdx
+*.spdx.json
+src/.spdx-laravel.json
+
+# Keys / secrets
+/storage/*.key
+auth.json
+
+# Editor/IDE
+/.idea
+/.vscode
+/.phpactor.json
+/.fleet
+/.zed
+
+# OS / editors
+.DS_Store
+Thumbs.db
+/.vscode
+/.idea
+
+# Docker overrides
+docker-compose.override.yml
+.docker-compose.*.yml
+
+# Misc
+Homestead.json
+Homestead.yaml

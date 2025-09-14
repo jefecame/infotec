@@ -1,36 +1,66 @@
+version: '3.8'
+
 services:
   mariadb:
     image: 'bitnami/mariadb:latest'
+    env_file:
+      - .env          # define MARIADB_PASSWORD, MARIADB_USER, MARIADB_DATABASE aquí
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - MARIADB_USER=bn_myapp
-      - MARIADB_DATABASE=bitnami_myapp
-      - MARIADB_PASSWORD=b1tnam1_my@pp
+      - ALLOW_EMPTY_PASSWORD=no
     volumes:
-      - 'mariadb_data:/bitnami/mariadb'
+      - mariadb_data:/bitnami/mariadb
+    restart: unless-stopped
     networks:
       - laravel-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   application:
+    # Opción A: usar imagen oficial (rápido para dev). Si la imagen incluye herramientas, puedes usarla.
     image: 'bitnami/laravel:latest'
+    # Opción B (descomentar si quieres build local y ejecutar composer durante el build):
+    # build:
+    #   context: ./src
+    #   dockerfile: Dockerfile
+    env_file:
+      - .env
     environment:
       - LARAVEL_DATABASE_TYPE=mysql
       - LARAVEL_DATABASE_HOST=mariadb
       - LARAVEL_DATABASE_PORT_NUMBER=3306
-      - LARAVEL_DATABASE_NAME=bitnami_myapp
-      - LARAVEL_DATABASE_USER=bn_myapp
-      - LARAVEL_DATABASE_PASSWORD=b1tnam1_my@pp
+      - LARAVEL_DATABASE_NAME=${MARIADB_DATABASE}
+      - LARAVEL_DATABASE_USER=${MARIADB_USER}
+      - LARAVEL_DATABASE_PASSWORD=${MARIADB_PASSWORD}
     ports:
       - '8000:8000'
     volumes:
-      - './src:/app'
+      - './src:/app'              # código fuente montado (útil para desarrollo)
+      # Si quieres evitar que /app/vendor de la imagen sea ocultado por el bind,
+      # usa un volumen nombrado para vendor en desarrollo:
+      # - vendor_data:/app/vendor
     depends_on:
       - mariadb
+    restart: unless-stopped
+    networks:
+      - laravel-network
+
+  composer:
+    image: 'composer:2'           # servicio one‑off para instalar dependencias
+    working_dir: /app
+    volumes:
+      - './src:/app'
+    entrypoint: ['composer']
+    command: ['install', '--no-interaction', '--prefer-dist', '--optimize-autoloader']
     networks:
       - laravel-network
 
 volumes:
   mariadb_data:
+    driver: local
+  vendor_data:
     driver: local
 
 networks:
