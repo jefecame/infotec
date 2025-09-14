@@ -1,5 +1,5 @@
 # =============================================================================
-# INFOTEC - Archivos a Ignorar en Git (.gitignore)
+# INFOTEC - Archivos a Ignorar en Git (Raiz del repo) (.gitignore)
 # =============================================================================
 # Configurado para proyecto Laravel con Docker
 # =============================================================================
@@ -10,6 +10,7 @@
 .env
 .env.*.backup
 .env.*.local
+src/.env
 auth.json
 
 # -----------------------------------------------------------------------------
@@ -56,6 +57,7 @@ coverage.xml
 *.spdx
 *.spdx.json
 src/.spdx-laravel.json
+src/*.spdx*
 
 # Claves y secretos
 /storage/*.key
