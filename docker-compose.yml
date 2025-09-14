@@ -4,7 +4,7 @@ services:
   mariadb:
     image: 'bitnami/mariadb:latest'
     env_file:
-      - .env          # define MARIADB_PASSWORD, MARIADB_USER, MARIADB_DATABASE aquí
+      - .env
     environment:
       - ALLOW_EMPTY_PASSWORD=no
     volumes:
@@ -19,12 +19,7 @@ services:
       retries: 5
 
   application:
-    # Opción A: usar imagen oficial (rápido para dev). Si la imagen incluye herramientas, puedes usarla.
     image: 'bitnami/laravel:latest'
-    # Opción B (descomentar si quieres build local y ejecutar composer durante el build):
-    # build:
-    #   context: ./src
-    #   dockerfile: Dockerfile
     env_file:
       - .env
     environment:
@@ -37,13 +32,8 @@ services:
     ports:
       - '8000:8000'
     volumes:
-      #- './src:/app'              # código fuente montado (útil para desarrollo)
-      - './src:/app:cached'        # código fuente montado
-      # Si quieres evitar que /app/vendor de la imagen sea ocultado por el bind,
-      # usa un volumen nombrado para vendor en desarrollo:
-      # - vendor_data:/app/vendor
-    #volumes:
-      - 'vendor_data:/app/vendor'  # evita que el bind de src esconda el vendor de la imagen / composer
+      - './src:/app:cached'        # monta tu código fuente
+      - 'vendor_data:/app/vendor'  # volumen nombrado para vendor (evita que bind mount lo oculte)
     command: ['php','artisan','serve','--host=0.0.0.0','--port=8000']
     depends_on:
       - mariadb
@@ -52,7 +42,7 @@ services:
       - laravel-network
 
   composer:
-    image: 'composer:latest'           # servicio one‑off para instalar dependencias
+    image: 'composer:2'
     working_dir: /app
     volumes:
       - './src:/app'
@@ -71,3 +61,4 @@ volumes:
 networks:
   laravel-network:
     driver: bridge
+    

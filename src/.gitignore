@@ -1,0 +1,20 @@
+# Laravel: evitar commitear artefactos y dependencias
+/vendor
+/node_modules
+/.env
+.env.*.local
+
+/storage/*
+!/storage/.gitignore
+
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+/public/storage
+/public/hot
+/public/build
+
+*.log
+.phpunit.result.cache
+coverage/
+.spdx-*

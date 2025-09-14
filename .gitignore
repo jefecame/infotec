@@ -4,22 +4,22 @@
 .env.*.local
 
 # Dependencias
-/node_modules
 /vendor
+/node_modules
 /src/vendor
 /src/node_modules
 
-# Build / public
+# Laravel / build / public
 /public/build
 /public/hot
 /public/storage
 
-# Laravel folders to ignore excepto .gitignore markers
-/storage/*
-!/storage/.gitignore
+# Laravel folders a ignorar dentro de src
+/src/storage/*
+!/src/storage/.gitignore
 
-/bootstrap/cache/*
-!/bootstrap/cache/.gitignore
+/src/bootstrap/cache/*
+!/src/bootstrap/cache/.gitignore
 
 # SQLite
 *.sqlite*
@@ -32,30 +32,24 @@ database/*.sqlite*
 coverage/
 coverage.xml
 
-# SPDX / license scanner outputs (evita errores como "Invalid argument")
+# SPDX / scanner outputs (evita errores "Invalid argument")
 .spdx-*
 *.spdx
 *.spdx.json
 src/.spdx-laravel.json
-src/*.spdx
-src/*.spdx.json
 
 # Keys / secrets
 /storage/*.key
 auth.json
 
-# Editor/IDE
+# Editor/IDE y OS
 /.idea
 /.vscode
 /.phpactor.json
 /.fleet
 /.zed
-
-# OS / editors
 .DS_Store
 Thumbs.db
-/.vscode
-/.idea
 
 # Docker overrides
 docker-compose.override.yml
@@ -64,42 +58,3 @@ docker-compose.override.yml
 # Misc
 Homestead.json
 Homestead.yaml
-
-
-# Laravel: evitar commitear artefactos y dependencias
-/vendor
-/node_modules
-/.env
-.env.*.local
-
-/storage/*
-!/storage/.gitignore
-
-/bootstrap/cache/*
-!/bootstrap/cache/.gitignore
-
-/public/storage
-/public/hot
-/public/build
-
-# Testing / coverage / logs
-*.log
-.phpunit.result.cache
-/.phpunit.cache
-coverage/
-coverage.xml
-
-# SPDX / license scanner outputs
-.spdx-*
-*.spdx
-*.spdx.json
-.spdx-laravel.*
-
-# OS / editors
-.DS_Store
-Thumbs.db
-/.idea
-/.vscode
-
-*
-!.gitignore

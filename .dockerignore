@@ -9,3 +9,4 @@ src/vendor
 src/node_modules
 *.log
 .DS_Store
+coverage/
