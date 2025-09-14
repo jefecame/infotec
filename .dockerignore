@@ -5,5 +5,7 @@
 .env.*
 node_modules
 vendor
+src/vendor
+src/node_modules
 *.log
 .DS_Store

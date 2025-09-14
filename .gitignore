@@ -6,6 +6,8 @@
 # Dependencias
 /node_modules
 /vendor
+/src/vendor
+/src/node_modules
 
 # Build / public
 /public/build
@@ -35,6 +37,8 @@ coverage.xml
 *.spdx
 *.spdx.json
 src/.spdx-laravel.json
+src/*.spdx
+src/*.spdx.json
 
 # Keys / secrets
 /storage/*.key
