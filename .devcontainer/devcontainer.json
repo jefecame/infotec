@@ -3,11 +3,11 @@
   "dockerComposeFile": [
     "../docker-compose.yml"
   ],
-  "service": "application",
+  "service": "laravel",
   "workspaceFolder": "/app",
   "runServices": [
     "mariadb",
-    "application"
+    "laravel"
   ],
   "shutdownAction": "stopCompose",
   "forwardPorts": [

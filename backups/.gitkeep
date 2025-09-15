@@ -1,0 +1,6 @@
+# =============================================================================
+# INFOTEC - Directorio de Backups de Base de Datos
+# =============================================================================
+# Este archivo mantiene el directorio en Git
+# Los backups se crearán automáticamente con: make backup
+# =============================================================================

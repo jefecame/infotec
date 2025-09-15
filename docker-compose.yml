@@ -58,6 +58,7 @@ services:
     volumes:
       - './src:/app'
       - 'vendor_data:/app/vendor'  # Carpeta vendor persistente para rendimiento
+      - 'composer_cache:/root/.composer/cache'  # Cache de Composer
     command: >
       bash -c "
         echo '🚀 INFOTEC - Iniciando configuración automática de Laravel...'

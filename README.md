@@ -41,7 +41,32 @@ docker compose up -d
 7. ✅ **Ejecuta las migraciones** de base de datos
 8. ✅ **Inicia el servidor** de desarrollo de Laravel
 
-## 📋 Comandos Adicionales (Opcionales)
+## 📋 Comandos Simplificados con Makefile
+
+**¡NUEVO!** Ahora puedes usar comandos simplificados:
+
+```bash
+# Ver todos los comandos disponibles
+make help
+
+# Configurar e iniciar desarrollo (reemplaza los comandos anteriores)
+make start
+
+# Ver logs
+make logs
+
+# Detener servicios
+make stop
+
+# Reiniciar completamente
+make clean && make start
+
+# Ejecutar comandos de Laravel
+make artisan cmd="migrate"
+make composer cmd="install"
+```
+
+### Comandos Tradicionales (También Funcionan)
 
 ```bash
 # Detener servicios
@@ -173,7 +198,7 @@ COMPOSE_PROJECT_NAME=infotec
 
 - ⚠️ **Nunca commitear `.env`** - Contiene credenciales sensibles
 - 🔑 **Usar Codespaces Secrets** para credenciales en la nube
-- 🏠 **Solo desarrollo** - Este entorno es para desarrollo, no producción
+- 🏠 **Entorno de desarrollo** - Optimizado para desarrollo local y Codespaces
 
 
 ## 🔗 Enlaces Útiles
