@@ -86,10 +86,6 @@ docker-compose.override.yml
 # Datos de MariaDB (volumen Docker)
 storage/mariadb/
 
-# Backups de base de datos
-backups/*.sql
-!backups/.gitkeep
-
 # -----------------------------------------------------------------------------
 # OTROS
 # -----------------------------------------------------------------------------

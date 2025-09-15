@@ -13,7 +13,7 @@
   "forwardPorts": [
     8000
   ],
-  "postCreateCommand": "composer install --no-interaction || true && php artisan key:generate --force || true",
+  "postCreateCommand": "echo 'Codespace listo - ejecuta: docker compose up -d'",
   "extensions": [
     "bmewburn.vscode-intelephense-client",
     "felixfbecker.php-debug"

@@ -43,5 +43,4 @@ Thumbs.db
 # DOCUMENTACIÓN Y OTROS
 # -----------------------------------------------------------------------------
 README.md
-Makefile
 docker-compose.override.yml
