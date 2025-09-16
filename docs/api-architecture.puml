@@ -1,4 +1,4 @@
-@startuml INFOTEC API Architecture
+@startuml INFOTEC Arquitectura API
 !theme plain
 skinparam {
     backgroundColor #FAFAFA
@@ -6,26 +6,26 @@ skinparam {
     packageStyle rectangle
 }
 
-title INFOTEC - API Architecture & Endpoints
-
+title INFOTEC - Arquitectura API y Endpoints
+subtitle API RESTful Laravel 11 con Validación Mejorada
 ' ============================================================================
-' CLIENT LAYER
+' CAPA CLIENTE
 ' ============================================================================
 
-package "Client Applications" as ClientLayer #E8F5E8 {
-    component "Web Frontend" as WebApp
-    component "Mobile App" as MobileApp
-    component "Third-party API" as ThirdParty
+package "Aplicaciones Cliente" as ClientLayer #E8F5E8 {
+    component "Frontend Web" as WebApp
+    component "App Móvil" as MobileApp
+    component "API Terceros" as ThirdParty
 }
 
 ' ============================================================================
-' API LAYER
+' CAPA API
 ' ============================================================================
 
-package "Laravel 11 API" as APILayer #E3F2FD {
+package "API Laravel 11" as APILayer #E3F2FD {
     
-    ' Route Layer
-    package "Routes (api.php)" as RouteLayer #F3E5F5 {
+    ' Capa de Rutas
+    package "Rutas (api.php)" as RouteLayer #F3E5F5 {
         component "GET /api/eventos" as GetEventos
         component "POST /api/eventos" as PostEventos
         component "GET /api/eventos/{id}" as GetEvento
@@ -45,8 +45,8 @@ package "Laravel 11 API" as APILayer #E3F2FD {
         component "DELETE /api/asistentes/{id}" as DeleteAsistente
     }
     
-    ' Controller Layer
-    package "Controllers" as ControllerLayer #FFF3E0 {
+    ' Capa de Controladores
+    package "Controladores" as ControllerLayer #FFF3E0 {
         
         class EventoController {
             + index() : JsonResponse
@@ -55,13 +55,13 @@ package "Laravel 11 API" as APILayer #E3F2FD {
             + update(Request, id) : JsonResponse
             + destroy(id) : JsonResponse
             --
-            <color:blue>**Features**</color>
-            • Eager loading (asistentes, ponentes)
-            • Enhanced validation
-            • Date validation (no past events)
-            • Detailed error responses
+            <color:blue>**Características**</color>
+            • Carga eager (asistentes, ponentes)
+            • Validación mejorada
+            • Validación de fechas (no eventos pasados)
+            • Respuestas de error detalladas
             --
-            <color:green>**Validation Rules**</color>
+            <color:green>**Reglas de Validación**</color>
             • titulo: required|string|max:255
             • descripcion: required|string|max:10000
             • fecha_inicio: required|date|after_or_equal:today
@@ -76,17 +76,17 @@ package "Laravel 11 API" as APILayer #E3F2FD {
             + update(Request, id) : JsonResponse
             + destroy(id) : JsonResponse
             --
-            <color:blue>**Features**</color>
-            • Eager loading (evento)
-            • Email validation
-            • Unique email per event validation
-            • Foreign key existence validation
+            <color:blue>**Características**</color>
+            • Carga eager (evento)
+            • Validación de email
+            • Email único por evento
+            • Validación de existencia de clave foránea
             --
-            <color:green>**Validation Rules**</color>
-            • nombre: required|string|max:255
-            • email: required|email|unique per event
-            • telefono: required|string|max:20
-            • evento_id: required|integer|exists:eventos,id
+            <color:green>**Reglas de Validación**</color>
+            • nombre: requerido|string|max:255
+            • email: requerido|email|único por evento
+            • telefono: requerido|string|max:20
+            • evento_id: requerido|integer|exists:eventos,id
         }
         
         class PonenteController {
@@ -96,24 +96,24 @@ package "Laravel 11 API" as APILayer #E3F2FD {
             + update(Request, id) : JsonResponse
             + destroy(id) : JsonResponse
             --
-            <color:blue>**Features**</color>
-            • Basic CRUD operations
-            • Text field support for biografia
-            • Ready for relationship management
+            <color:blue>**Características**</color>
+            • Operaciones CRUD básicas
+            • Soporte de campo texto para biografía
+            • Listo para gestión de relaciones
             --
-            <color:green>**Validation Rules**</color>
-            • nombre: required|string|max:255
-            • biografia: required|text
-            • especialidad: required|string|max:255
+            <color:green>**Reglas de Validación**</color>
+            • nombre: requerido|string|max:255
+            • biografia: requerido|text
+            • especialidad: requerido|string|max:255
         }
     }
 }
 
 ' ============================================================================
-' MODEL LAYER
+' CAPA MODELOS
 ' ============================================================================
 
-package "Eloquent Models" as ModelLayer #E8F5E8 {
+package "Modelos Eloquent" as ModelLayer #E8F5E8 {
     class Evento {
         + fillable: [titulo, descripcion, fecha_inicio, fecha_fin, ubicacion]
         + asistentes(): hasMany
@@ -132,54 +132,54 @@ package "Eloquent Models" as ModelLayer #E8F5E8 {
 }
 
 ' ============================================================================
-' DATABASE LAYER
+' CAPA BASE DE DATOS
 ' ============================================================================
 
-package "MariaDB Database" as DatabaseLayer #FFEBEE {
+package "Base de Datos MariaDB" as DatabaseLayer #FFEBEE {
     database "eventos" as EventosTable {
-        - id (PK)
-        - titulo (indexed)
-        - descripcion (text)
-        - fecha_inicio (indexed)
-        - fecha_fin (indexed)
+        - id (CP)
+        - titulo (indexado)
+        - descripcion (texto)
+        - fecha_inicio (indexado)
+        - fecha_fin (indexado)
         - ubicacion
         - timestamps
     }
     
     database "asistentes" as AsistentesTable {
-        - id (PK)
+        - id (CP)
         - nombre
-        - email (unique per event)
+        - email (único por evento)
         - telefono
-        - evento_id (FK, indexed)
+        - evento_id (CF, indexado)
         - timestamps
     }
     
     database "ponentes" as PonentesTable {
-        - id (PK)
+        - id (CP)
         - nombre
-        - biografia (text)
+        - biografia (texto)
         - especialidad
         - timestamps
     }
     
     database "evento_ponente" as PivotTable {
-        - id (PK)
-        - evento_id (FK, indexed)
-        - ponente_id (FK, indexed)
-        - unique(evento_id, ponente_id)
+        - id (CP)
+        - evento_id (CF, indexado)
+        - ponente_id (CF, indexado)
+        - único(evento_id, ponente_id)
         - timestamps
     }
 }
 
 ' ============================================================================
-' CONNECTIONS
+' CONEXIONES
 ' ============================================================================
 
-' Client to API
-ClientLayer --> RouteLayer : "HTTP Requests\n(JSON)"
+' Cliente a API
+ClientLayer --> RouteLayer : "Peticiones HTTP\n(JSON)"
 
-' Routes to Controllers
+' Rutas a Controladores
 GetEventos --> EventoController : "index()"
 PostEventos --> EventoController : "store()"
 GetEvento --> EventoController : "show()"
@@ -198,31 +198,31 @@ GetPonente --> PonenteController : "show()"
 PutPonente --> PonenteController : "update()"
 DeletePonente --> PonenteController : "destroy()"
 
-' Controllers to Models
-EventoController --> Evento : "uses"
-AsistenteController --> Asistente : "uses"
-PonenteController --> Ponente : "uses"
+' Controladores a Modelos
+EventoController --> Evento : "usa"
+AsistenteController --> Asistente : "usa"
+PonenteController --> Ponente : "usa"
 
-' Models to Database
-Evento --> EventosTable : "queries"
-Asistente --> AsistentesTable : "queries"
-Ponente --> PonentesTable : "queries"
+' Modelos a Base de Datos
+Evento --> EventosTable : "consultas"
+Asistente --> AsistentesTable : "consultas"
+Ponente --> PonentesTable : "consultas"
 
-' Database relationships
+' Relaciones de Base de Datos
 EventosTable ||--o{ AsistentesTable : "1:N"
 EventosTable ||--o{ PivotTable : "1:N"
 PonentesTable ||--o{ PivotTable : "1:N"
 
 ' ============================================================================
-' RESPONSE FORMATS
+' FORMATOS DE RESPUESTA
 ' ============================================================================
 
-note bottom of APILayer : <color:blue>**Standard Response Formats**</color>\n\n**Success Response:**\n{\n  "eventos": [...],\n  "status": 200\n}\n\n**Error Response:**\n{\n  "message": "Error de validación",\n  "errors": {...validation errors...},\n  "status": 400\n}\n\n**Features:**\n• JSON responses\n• HTTP status codes\n• Detailed validation errors\n• Eager loaded relationships
+note bottom of APILayer : <color:blue>**Formatos de Respuesta Estándar**</color>\n\n**Respuesta Éxito:**\n{\n  "eventos": [...],\n  "status": 200\n}\n\n**Respuesta Error:**\n{\n  "message": "Error de validación",\n  "errors": {...errores de validación...},\n  "status": 400\n}\n\n**Características:**\n• Respuestas JSON\n• Códigos de estado HTTP\n• Errores de validación detallados\n• Relaciones cargadas con eager loading
 
 ' ============================================================================
-' MIDDLEWARE & FEATURES
+' MIDDLEWARE Y CARACTERÍSTICAS
 ' ============================================================================
 
-note top of APILayer : <color:green>**API Features**</color>\n• RESTful endpoints\n• JSON request/response\n• Eloquent ORM\n• Enhanced validation\n• Eager loading\n• Foreign key validation\n• Unique constraints\n• Detailed error messages\n• Laravel 11 best practices
+note top of APILayer : <color:green>**Características de la API**</color>\n• Endpoints RESTful\n• Petición/respuesta JSON\n• ORM Eloquent\n• Validación mejorada\n• Carga eager loading\n• Validación de claves foráneas\n• Restricciones de unicidad\n• Mensajes de error detallados\n• Mejores prácticas Laravel 11
 
 @enduml

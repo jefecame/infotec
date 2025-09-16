@@ -1,4 +1,4 @@
-@startuml INFOTEC Entity Relationships
+@startuml INFOTEC Relaciones de Entidades
 !theme plain
 skinparam backgroundColor #FEFEFE
 skinparam class {
@@ -8,14 +8,14 @@ skinparam class {
     ArrowColor #1976D2
 }
 
-title INFOTEC - Entity Relationship Diagram
+title INFOTEC - Diagrama de Relación de Entidades
 
 ' ============================================================================
-' ENTITIES
+' ENTIDADES
 ' ============================================================================
 
-class Evento <<Entity>> {
-    + id: bigint PK
+class Evento <<Entidad>> {
+    + id: bigint CP
     --
     + titulo: varchar(255) 🔍
     + descripcion: text 📝
@@ -26,13 +26,13 @@ class Evento <<Entity>> {
     + created_at: timestamp
     + updated_at: timestamp
     ==
-    <color:blue>**Relationships**</color>
-    + asistentes(): hasMany
-    + ponentes(): belongsToMany
+    <color:blue>**Relaciones**</color>
+    + asistentes(): tieneVarios
+    + ponentes(): perteneceAVarios
 }
 
-class Ponente <<Entity>> {
-    + id: bigint PK
+class Ponente <<Entidad>> {
+    + id: bigint CP
     --
     + nombre: varchar(255)
     + biografia: text 📝
@@ -41,30 +41,30 @@ class Ponente <<Entity>> {
     + created_at: timestamp
     + updated_at: timestamp
     ==
-    <color:blue>**Relationships**</color>
-    + eventos(): belongsToMany
+    <color:blue>**Relaciones**</color>
+    + eventos(): perteneceAVarios
 }
 
-class Asistente <<Entity>> {
-    + id: bigint PK
+class Asistente <<Entidad>> {
+    + id: bigint CP
     --
     + nombre: varchar(255)
     + email: varchar(255) ✉️
     + telefono: varchar(255)
-    + evento_id: bigint FK
+    + evento_id: bigint CF
     --
     + created_at: timestamp
     + updated_at: timestamp
     ==
-    <color:blue>**Relationships**</color>
-    + evento(): belongsTo
+    <color:blue>**Relaciones**</color>
+    + evento(): pertenece A
 }
 
-class EventoPonente <<Pivot>> {
-    + id: bigint PK
+class EventoPonente <<Tabla Pivote>> {
+    + id: bigint CP
     --
-    + evento_id: bigint FK
-    + ponente_id: bigint FK
+    + evento_id: bigint CF
+    + ponente_id: bigint CF
     --
     + created_at: timestamp
     + updated_at: timestamp
