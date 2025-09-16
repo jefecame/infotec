@@ -1,0 +1,111 @@
+@startuml INFOTEC Laravel Models
+!define ENTITY class
+!define PRIMARY_KEY <b><color:red>
+!define FOREIGN_KEY <b><color:blue>
+!define UNIQUE <b><color:green>
+!define INDEX <b><color:orange>
+!define TEXT <color:purple>
+
+title INFOTEC - Laravel Models & Database Schema
+
+' ============================================================================
+' ENTITIES / MODELS
+' ============================================================================
+
+ENTITY Evento {
+    PRIMARY_KEY id : bigint(20) unsigned
+    INDEX titulo : varchar(255)
+    TEXT descripcion : text
+    INDEX fecha_inicio : date
+    INDEX fecha_fin : date
+    ubicacion : varchar(255)
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    --
+    <color:green>Indexes:</color>
+    • titulo_index
+    • fecha_inicio_index  
+    • fecha_fin_index
+    • (fecha_inicio, fecha_fin)_composite
+    --
+    <color:blue>Relationships:</color>
+    + asistentes() : hasMany
+    + ponentes() : belongsToMany
+}
+
+ENTITY Ponente {
+    PRIMARY_KEY id : bigint(20) unsigned
+    nombre : varchar(255)
+    TEXT biografia : text
+    especialidad : varchar(255)
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    --
+    <color:blue>Relationships:</color>
+    + eventos() : belongsToMany
+}
+
+ENTITY Asistente {
+    PRIMARY_KEY id : bigint(20) unsigned
+    nombre : varchar(255)
+    UNIQUE email : varchar(255)
+    telefono : varchar(255)
+    FOREIGN_KEY evento_id : bigint(20) unsigned
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    --
+    <color:green>Constraints:</color>
+    • UNIQUE (email, evento_id)
+    • FK evento_id → eventos.id CASCADE
+    • INDEX evento_id
+    --
+    <color:blue>Relationships:</color>
+    + evento() : belongsTo
+}
+
+ENTITY EventoPonente <<Pivot Table>> {
+    PRIMARY_KEY id : bigint(20) unsigned
+    FOREIGN_KEY evento_id : bigint(20) unsigned
+    FOREIGN_KEY ponente_id : bigint(20) unsigned
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    --
+    <color:green>Constraints:</color>
+    • UNIQUE (evento_id, ponente_id)
+    • FK evento_id → eventos.id CASCADE
+    • FK ponente_id → ponentes.id CASCADE
+    • INDEX evento_id
+    • INDEX ponente_id
+}
+
+' ============================================================================
+' RELATIONSHIPS
+' ============================================================================
+
+' One-to-Many: Evento → Asistentes
+Evento ||--o{ Asistente : "hasMany\n(one evento, many asistentes)"
+
+' Many-to-Many: Evento ↔ Ponentes
+Evento ||--o{ EventoPonente : "evento_id"
+EventoPonente }o--|| Ponente : "ponente_id"
+
+' Foreign Key Constraint Lines
+Asistente }o--|| Evento : "evento_id\n(CASCADE DELETE)"
+
+' ============================================================================
+' NOTES AND ADDITIONAL INFO
+' ============================================================================
+
+note top of Evento : <color:red><b>Event Management Entity</b></color>\n• Can have multiple attendees\n• Can have multiple speakers\n• Long descriptions supported (TEXT)\n• Optimized with performance indexes\n• Date range validation in controller
+
+note top of Ponente : <color:red><b>Speaker/Presenter Entity</b></color>\n• Can participate in multiple events\n• Long biographies supported (TEXT)\n• Many-to-many with events
+
+note top of Asistente : <color:red><b>Event Attendee Entity</b></color>\n• Belongs to one event\n• Email must be unique per event\n• Cascade deleted when event is deleted
+
+note top of EventoPonente : <color:red><b>Pivot Table</b></color>\n• Many-to-many relationship\n• Prevents duplicate assignments\n• Cascade deletes from both sides\n• Includes timestamps
+
+@enduml
