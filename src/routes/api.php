@@ -34,13 +34,13 @@ Route::get('/ponentes', [PonenteController::class, 'index']);
 Route::post('/ponentes', [PonenteController::class, 'store']);
 Route::get('/ponentes/{id}', [PonenteController::class, 'show']);
 Route::put('/ponentes/{ponente}', [PonenteController::class, 'update']);
-Route::delete('/ponentes/{id}', [Ponenteontroller::class, 'destroy']);
+Route::delete('/ponentes/{id}', [PonenteController::class, 'destroy']);
 
 /**
 * Rutas para el recurso Asistente.
 */
 
-Route::get('/asistentes', [Asistenteontroller::class, 'index']);
+Route::get('/asistentes', [AsistenteController::class, 'index']);
 Route::post('/asistentes', [AsistenteController::class, 'store']);
 Route::get('/asistentes/{id}', [AsistenteController::class, 'show']);
 Route::put('/asistentes/{asistente}', [AsistenteController::class, 'update']);
