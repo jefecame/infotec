@@ -1,11 +1,50 @@
 # =============================================================================
-# INFOTEC - Carpeta SRC (Laravel se crea automáticamente) (src/.gitignore)
+# LARAVEL - .gitignore (Generado automáticamente por INFOTEC)
 # =============================================================================
-# Esta carpeta se mantiene vacía hasta que Docker Compose cree el proyecto Laravel
-# No eliminar este archivo - mantiene la carpeta en Git
+# Configurado para proyecto Laravel 11 con Docker
 # =============================================================================
 
-# Permitir que Laravel se instale aquí automáticamente
-# El contenido se genera por Docker Compose al ejecutar "make start"
-*
-!.gitignore
+# -----------------------------------------------------------------------------
+# DEPENDENCIAS Y PAQUETES
+# -----------------------------------------------------------------------------
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+
+# -----------------------------------------------------------------------------
+# ARCHIVOS DE DESARROLLO LOCAL
+# -----------------------------------------------------------------------------
+auth.json
+
+# -----------------------------------------------------------------------------
+# LOGS Y ARCHIVOS TEMPORALES
+# -----------------------------------------------------------------------------
+*.log
+/.phpunit.cache
+coverage/
+coverage.xml
+
+# -----------------------------------------------------------------------------
+# SISTEMAS OPERATIVOS
+# -----------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------------------------------------------------------
+# DOCKER Y CONTENEDORES (Solo archivos locales específicos)
+# -----------------------------------------------------------------------------
+docker-compose.override.yml
