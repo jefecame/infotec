@@ -9,7 +9,6 @@ skinparam class {
 }
 
 title INFOTEC - Entity Relationship Diagram
-subtitle Laravel 11 Event Management System
 
 ' ============================================================================
 ' ENTITIES

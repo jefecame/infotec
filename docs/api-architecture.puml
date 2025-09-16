@@ -7,7 +7,6 @@ skinparam {
 }
 
 title INFOTEC - API Architecture & Endpoints
-subtitle Laravel 11 RESTful API with Enhanced Validation
 
 ' ============================================================================
 ' CLIENT LAYER

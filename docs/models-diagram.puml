@@ -7,7 +7,6 @@
 !define TEXT <color:purple>
 
 title INFOTEC - Laravel Models & Database Schema
-subtitle Event Management System with Laravel 11 + MariaDB
 
 ' ============================================================================
 ' ENTITIES / MODELS
