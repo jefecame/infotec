@@ -44,6 +44,7 @@ services:
     image: bitnami/laravel:11
     container_name: infotec_laravel
     environment:
+      # Variables específicas de Bitnami
       - LARAVEL_DATABASE_TYPE=mysql
       - LARAVEL_DATABASE_HOST=mariadb
       - LARAVEL_DATABASE_PORT_NUMBER=3306
@@ -51,6 +52,16 @@ services:
       - LARAVEL_DATABASE_USER=${MARIADB_USER}
       - LARAVEL_DATABASE_PASSWORD=${MARIADB_PASSWORD}
       - LARAVEL_VERSION=${LARAVEL_VERSION:-11.*}
+      
+      # Variables para Laravel .env
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-mariadb}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-${MARIADB_DATABASE}}
+      - DB_USERNAME=${DB_USERNAME:-${MARIADB_USER}}
+      - DB_PASSWORD=${DB_PASSWORD:-${MARIADB_PASSWORD}}
+      
+      # Configuración PHP
       - PHP_MEMORY_LIMIT=256M
       - PHP_MAX_EXECUTION_TIME=300
     ports:
@@ -63,11 +74,11 @@ services:
       bash -c "
         echo '🚀 INFOTEC - Configuración automática de Laravel'
         
-        # Esperar MariaDB
+        # Esperar MariaDB usando netcat (más confiable)
         echo '⏳ Esperando MariaDB...'
         for i in {1..30}; do
-          if mysqladmin ping -h mariadb -u \$$LARAVEL_DATABASE_USER -p\$$LARAVEL_DATABASE_PASSWORD --silent 2>/dev/null; then
-            echo '✅ MariaDB conectado'
+          if nc -z mariadb 3306 2>/dev/null; then
+            echo '✅ MariaDB disponible en puerto 3306'
             break
           fi
           sleep 2
@@ -98,13 +109,15 @@ services:
         # Configurar Laravel
         [ ! -f .env ] && cp .env.example .env
         
-        # Configurar base de datos
-        sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env
-        sed -i 's/DB_HOST=.*/DB_HOST=mariadb/' .env
-        sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
-        sed -i \"s/DB_DATABASE=.*/DB_DATABASE=\$$LARAVEL_DATABASE_NAME/\" .env
-        sed -i \"s/DB_USERNAME=.*/DB_USERNAME=\$$LARAVEL_DATABASE_USER/\" .env
-        sed -i \"s/DB_PASSWORD=.*/DB_PASSWORD=\$$LARAVEL_DATABASE_PASSWORD/\" .env
+        # Configurar base de datos usando variables de entorno
+        sed -i \"s/DB_CONNECTION=.*/DB_CONNECTION=\$$DB_CONNECTION/\" .env
+        sed -i \"s/DB_HOST=.*/DB_HOST=\$$DB_HOST/\" .env
+        sed -i \"s/DB_PORT=.*/DB_PORT=\$$DB_PORT/\" .env
+        sed -i \"s/DB_DATABASE=.*/DB_DATABASE=\$$DB_DATABASE/\" .env
+        sed -i \"s/DB_USERNAME=.*/DB_USERNAME=\$$DB_USERNAME/\" .env
+        sed -i \"s/DB_PASSWORD=.*/DB_PASSWORD=\$$DB_PASSWORD/\" .env
+        
+        echo '⚙️ Configuración de BD: MariaDB ('"\$$DB_HOST:\$$DB_PORT/\$$DB_DATABASE"')'
         
         # Generar APP_KEY si no existe
         grep -q 'APP_KEY=base64:' .env || php artisan key:generate --force
