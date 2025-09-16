@@ -71,48 +71,48 @@ class EventoPonente <<Tabla Pivote>> {
 }
 
 ' ============================================================================
-' RELATIONSHIPS
+' RELACIONES
 ' ============================================================================
 
-Evento ||--o{ Asistente : "1:N\n(hasMany/belongsTo)"
+Evento ||--o{ Asistente : "1:N\n(tieneVarios/perteneceA)"
 Evento ||--o{ EventoPonente : ""
 EventoPonente }o--|| Ponente : ""
 
 ' ============================================================================
-' RELATIONSHIP ANNOTATIONS
+' ANOTACIONES DE RELACIONES
 ' ============================================================================
 
-note on link : <color:green>**CASCADE DELETE**</color>\nWhen evento is deleted,\nall asistentes are deleted
+note on link : <color:green>**ELIMINACIÓN EN CASCADA**</color>\nCuando se elimina un evento,\ntodos los asistentes se eliminan
 
-note on link : <color:purple>**MANY-TO-MANY**</color>\nPonentes can participate\nin multiple eventos
-
-' ============================================================================
-' CONSTRAINTS NOTES
-' ============================================================================
-
-note top of Evento : 🎯 **Event Entity**\n• Performance indexes on searchable fields\n• TEXT field for long descriptions\n• Date validation (no past events)
-
-note top of Ponente : 👨‍🏫 **Speaker Entity**\n• Can speak at multiple events\n• Long biographies supported
-
-note right of Asistente : 🎫 **Attendee Entity**\n• Unique email per event\n• CASCADE DELETE with evento
-
-note bottom of EventoPonente : 🔗 **Pivot Table**\n• Unique (evento_id, ponente_id)\n• CASCADE DELETE from both sides
+note on link : <color:purple>**VARIOS-A-VARIOS**</color>\nLos ponentes pueden participar\nen múltiples eventos
 
 ' ============================================================================
-' LEGEND
+' NOTAS DE RESTRICCIONES
+' ============================================================================
+
+note top of Evento : 🎯 **Entidad Evento**\n• Índices de rendimiento en campos buscables\n• Campo TEXTO para descripciones largas\n• Validación de fechas (no eventos pasados)
+
+note top of Ponente : 👨‍🏫 **Entidad Ponente**\n• Puede participar en múltiples eventos\n• Soporta biografías largas
+
+note right of Asistente : 🎫 **Entidad Asistente**\n• Email único por evento\n• ELIMINACIÓN EN CASCADA con evento
+
+note bottom of EventoPonente : 🔗 **Tabla Pivote**\n• Único (evento_id, ponente_id)\n• ELIMINACIÓN EN CASCADA desde ambos lados
+
+' ============================================================================
+' LEYENDA
 ' ============================================================================
 
 legend bottom left
-    <color:blue>**Symbols Legend**</color>
-    🔍 = Indexed field
-    📝 = TEXT field (long content)
-    ✉️ = Email field (validated)
-    PK = Primary Key
-    FK = Foreign Key
+    <color:blue>**Leyenda de Símbolos**</color>
+    🔍 = Campo indexado
+    📝 = Campo TEXTO (contenido largo)
+    ✉️ = Campo email (validado)
+    CP = Clave Primaria
+    CF = Clave Foránea
     
-    <color:green>**Relationship Types**</color>
-    1:N = One-to-Many
-    M:N = Many-to-Many (via pivot)
+    <color:green>**Tipos de Relaciones**</color>
+    1:N = Uno-a-Varios
+    M:N = Varios-a-Varios (vía pivote)
 endlegend
 
 @enduml

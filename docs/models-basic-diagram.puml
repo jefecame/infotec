@@ -1,4 +1,4 @@
-@startuml INFOTEC Laravel Models
+@startuml INFOTEC Modelos Laravel
 !define ENTITY class
 !define PRIMARY_KEY <b><color:red>
 !define FOREIGN_KEY <b><color:blue>
@@ -6,106 +6,106 @@
 !define INDEX <b><color:orange>
 !define TEXT <color:purple>
 
-title INFOTEC - Laravel Models & Database Schema
+title INFOTEC - Modelos Laravel y Esquema de Base de Datos
 
 ' ============================================================================
-' ENTITIES / MODELS
+' ENTIDADES / MODELOS
 ' ============================================================================
 
 ENTITY Evento {
-    PRIMARY_KEY id : bigint(20) unsigned
+    PRIMARY_KEY id : bigint(20) sin signo
     INDEX titulo : varchar(255)
-    TEXT descripcion : text
-    INDEX fecha_inicio : date
-    INDEX fecha_fin : date
+    TEXT descripcion : texto
+    INDEX fecha_inicio : fecha
+    INDEX fecha_fin : fecha
     ubicacion : varchar(255)
     --
     created_at : timestamp
     updated_at : timestamp
     --
-    <color:green>Indexes:</color>
+    <color:green>Índices:</color>
     • titulo_index
     • fecha_inicio_index  
     • fecha_fin_index
-    • (fecha_inicio, fecha_fin)_composite
+    • (fecha_inicio, fecha_fin)_compuesto
     --
-    <color:blue>Relationships:</color>
-    + asistentes() : hasMany
-    + ponentes() : belongsToMany
+    <color:blue>Relaciones:</color>
+    + asistentes() : tieneVarios
+    + ponentes() : perteneceAVarios
 }
 
 ENTITY Ponente {
-    PRIMARY_KEY id : bigint(20) unsigned
+    PRIMARY_KEY id : bigint(20) sin signo
     nombre : varchar(255)
-    TEXT biografia : text
+    TEXT biografia : texto
     especialidad : varchar(255)
     --
     created_at : timestamp
     updated_at : timestamp
     --
-    <color:blue>Relationships:</color>
-    + eventos() : belongsToMany
+    <color:blue>Relaciones:</color>
+    + eventos() : perteneceAVarios
 }
 
 ENTITY Asistente {
-    PRIMARY_KEY id : bigint(20) unsigned
+    PRIMARY_KEY id : bigint(20) sin signo
     nombre : varchar(255)
     UNIQUE email : varchar(255)
     telefono : varchar(255)
-    FOREIGN_KEY evento_id : bigint(20) unsigned
+    FOREIGN_KEY evento_id : bigint(20) sin signo
     --
     created_at : timestamp
     updated_at : timestamp
     --
-    <color:green>Constraints:</color>
-    • UNIQUE (email, evento_id)
-    • FK evento_id → eventos.id CASCADE
-    • INDEX evento_id
+    <color:green>Restricciones:</color>
+    • ÚNICO (email, evento_id)
+    • CF evento_id → eventos.id CASCADA
+    • ÍNDICE evento_id
     --
-    <color:blue>Relationships:</color>
-    + evento() : belongsTo
+    <color:blue>Relaciones:</color>
+    + evento() : perteneceA
 }
 
-ENTITY EventoPonente <<Pivot Table>> {
-    PRIMARY_KEY id : bigint(20) unsigned
-    FOREIGN_KEY evento_id : bigint(20) unsigned
-    FOREIGN_KEY ponente_id : bigint(20) unsigned
+ENTITY EventoPonente <<Tabla Pivote>> {
+    PRIMARY_KEY id : bigint(20) sin signo
+    FOREIGN_KEY evento_id : bigint(20) sin signo
+    FOREIGN_KEY ponente_id : bigint(20) sin signo
     --
     created_at : timestamp
     updated_at : timestamp
     --
-    <color:green>Constraints:</color>
-    • UNIQUE (evento_id, ponente_id)
-    • FK evento_id → eventos.id CASCADE
-    • FK ponente_id → ponentes.id CASCADE
-    • INDEX evento_id
-    • INDEX ponente_id
+    <color:green>Restricciones:</color>
+    • ÚNICO (evento_id, ponente_id)
+    • CF evento_id → eventos.id CASCADA
+    • CF ponente_id → ponentes.id CASCADA
+    • ÍNDICE evento_id
+    • ÍNDICE ponente_id
 }
 
 ' ============================================================================
-' RELATIONSHIPS
+' RELACIONES
 ' ============================================================================
 
-' One-to-Many: Evento → Asistentes
-Evento ||--o{ Asistente : "hasMany\n(one evento, many asistentes)"
+' Uno-a-Varios: Evento → Asistentes
+Evento ||--o{ Asistente : "tieneVarios\n(un evento, varios asistentes)"
 
-' Many-to-Many: Evento ↔ Ponentes
+' Varios-a-Varios: Evento ↔ Ponentes
 Evento ||--o{ EventoPonente : "evento_id"
 EventoPonente }o--|| Ponente : "ponente_id"
 
-' Foreign Key Constraint Lines
-Asistente }o--|| Evento : "evento_id\n(CASCADE DELETE)"
+' Líneas de Restricción de Clave Foránea
+Asistente }o--|| Evento : "evento_id\n(ELIMINACIÓN EN CASCADA)"
 
 ' ============================================================================
-' NOTES AND ADDITIONAL INFO
+' NOTAS E INFORMACIÓN ADICIONAL
 ' ============================================================================
 
-note top of Evento : <color:red><b>Event Management Entity</b></color>\n• Can have multiple attendees\n• Can have multiple speakers\n• Long descriptions supported (TEXT)\n• Optimized with performance indexes\n• Date range validation in controller
+note top of Evento : <color:red><b>Entidad Gestión de Eventos</b></color>\n• Puede tener múltiples asistentes\n• Puede tener múltiples ponentes\n• Soporta descripciones largas (TEXTO)\n• Optimizado con índices de rendimiento\n• Validación de rango de fechas en controlador
 
-note top of Ponente : <color:red><b>Speaker/Presenter Entity</b></color>\n• Can participate in multiple events\n• Long biographies supported (TEXT)\n• Many-to-many with events
+note top of Ponente : <color:red><b>Entidad Ponente/Presentador</b></color>\n• Puede participar en múltiples eventos\n• Soporta biografías largas (TEXTO)\n• Varios-a-varios con eventos
 
-note top of Asistente : <color:red><b>Event Attendee Entity</b></color>\n• Belongs to one event\n• Email must be unique per event\n• Cascade deleted when event is deleted
+note top of Asistente : <color:red><b>Entidad Asistente al Evento</b></color>\n• Pertenece a un evento\n• El email debe ser único por evento\n• Se elimina en cascada cuando se elimina el evento
 
-note top of EventoPonente : <color:red><b>Pivot Table</b></color>\n• Many-to-many relationship\n• Prevents duplicate assignments\n• Cascade deletes from both sides\n• Includes timestamps
+note top of EventoPonente : <color:red><b>Tabla Pivote</b></color>\n• Relación varios-a-varios\n• Previene asignaciones duplicadas\n• Eliminaciones en cascada desde ambos lados\n• Incluye timestamps
 
 @enduml
