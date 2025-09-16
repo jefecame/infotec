@@ -1,26 +1,21 @@
 {
-  "name": "Infotec (docker-compose)",
-  "dockerComposeFile": [
-    "../docker-compose.yml"
-  ],
-  "service": "laravel",
-  "workspaceFolder": "/app",
-  "runServices": [
-    "mariadb",
-    "laravel"
-  ],
-  "shutdownAction": "stopCompose",
-  "forwardPorts": [
-    8000
-  ],
-  "postCreateCommand": "echo 'Codespace listo - ejecuta: docker compose up -d'",
+  "name": "INFOTEC Laravel",
+  "image": "mcr.microsoft.com/devcontainers/php:1-8.2-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  "forwardPorts": [8000, 3306],
+  "postCreateCommand": "composer --version && docker --version && echo 'Codespace listo! Ejecuta: docker compose up -d'",
   "customizations": {
     "vscode": {
       "extensions": [
         "bmewburn.vscode-intelephense-client",
-        "felixfbecker.php-debug"
+        "felixfbecker.php-debug",
+        "ms-vscode.vscode-docker"
       ]
     }
-  },
-  "remoteUser": "1001"
+  }
 }
