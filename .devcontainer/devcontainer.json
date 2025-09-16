@@ -14,9 +14,13 @@
     8000
   ],
   "postCreateCommand": "echo 'Codespace listo - ejecuta: docker compose up -d'",
-  "extensions": [
-    "bmewburn.vscode-intelephense-client",
-    "felixfbecker.php-debug"
-  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "felixfbecker.php-debug"
+      ]
+    }
+  },
   "remoteUser": "1001"
 }
