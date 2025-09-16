@@ -1,0 +1,179 @@
+@startuml INFOTEC Laravel Models
+!define ENTITY class
+!define PRIMARY_KEY <b><color:red>
+!define FOREIGN_KEY <b><color:blue>
+!define UNIQUE <b><color:green>
+!define INDEX <b><color:orange>
+!define TEXT <color:purple>
+
+title INFOTEC - Laravel Models & Database Schema
+subtitle Event Management System with Laravel 11 + MariaDB
+
+' ============================================================================
+' ENTITIES / MODELS
+' ============================================================================
+
+ENTITY Evento {
+    PRIMARY_KEY id : bigint(20) unsigned
+    INDEX titulo : varchar(255)
+    TEXT descripcion : text
+    INDEX fecha_inicio : date
+    INDEX fecha_fin : date
+    ubicacion : varchar(255)
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    --
+    <color:green>Indexes:</color>
+    • titulo_index
+    • fecha_inicio_index  
+    • fecha_fin_index
+    • (fecha_inicio, fecha_fin)_composite
+    --
+    <color:blue>Relationships:</color>
+    + asistentes() : hasMany
+    + ponentes() : belongsToMany
+}
+
+ENTITY Ponente {
+    PRIMARY_KEY id : bigint(20) unsigned
+    nombre : varchar(255)
+    TEXT biografia : text
+    especialidad : varchar(255)
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    --
+    <color:blue>Relationships:</color>
+    + eventos() : belongsToMany
+}
+
+ENTITY Asistente {
+    PRIMARY_KEY id : bigint(20) unsigned
+    nombre : varchar(255)
+    UNIQUE email : varchar(255)
+    telefono : varchar(255)
+    FOREIGN_KEY evento_id : bigint(20) unsigned
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    --
+    <color:green>Constraints:</color>
+    • UNIQUE (email, evento_id)
+    • FK evento_id → eventos.id CASCADE
+    • INDEX evento_id
+    --
+    <color:blue>Relationships:</color>
+    + evento() : belongsTo
+}
+
+ENTITY EventoPonente <<Pivot Table>> {
+    PRIMARY_KEY id : bigint(20) unsigned
+    FOREIGN_KEY evento_id : bigint(20) unsigned
+    FOREIGN_KEY ponente_id : bigint(20) unsigned
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    --
+    <color:green>Constraints:</color>
+    • UNIQUE (evento_id, ponente_id)
+    • FK evento_id → eventos.id CASCADE
+    • FK ponente_id → ponentes.id CASCADE
+    • INDEX evento_id
+    • INDEX ponente_id
+}
+
+' ============================================================================
+' RELATIONSHIPS
+' ============================================================================
+
+' One-to-Many: Evento → Asistentes
+Evento ||--o{ Asistente : "hasMany\n(one evento, many asistentes)"
+
+' Many-to-Many: Evento ↔ Ponentes
+Evento ||--o{ EventoPonente : "evento_id"
+EventoPonente }o--|| Ponente : "ponente_id"
+
+' Foreign Key Constraint Lines
+Asistente }o--|| Evento : "evento_id\n(CASCADE DELETE)"
+
+' ============================================================================
+' NOTES AND ADDITIONAL INFO
+' ============================================================================
+
+note top of Evento : <color:red><b>Event Management Entity</b></color>\n• Can have multiple attendees\n• Can have multiple speakers\n• Long descriptions supported (TEXT)\n• Optimized with performance indexes\n• Date range validation in controller
+
+note top of Ponente : <color:red><b>Speaker/Presenter Entity</b></color>\n• Can participate in multiple events\n• Long biographies supported (TEXT)\n• Many-to-many with events
+
+note top of Asistente : <color:red><b>Event Attendee Entity</b></color>\n• Belongs to one event\n• Email must be unique per event\n• Cascade deleted when event is deleted
+
+note top of EventoPonente : <color:red><b>Pivot Table</b></color>\n• Many-to-many relationship\n• Prevents duplicate assignments\n• Cascade deletes from both sides\n• Includes timestamps
+
+' ============================================================================
+' CONTROLLERS AND API ENDPOINTS
+' ============================================================================
+
+package "API Controllers" {
+    class EventoController {
+        + index() : GET /api/eventos
+        + store() : POST /api/eventos
+        + show($id) : GET /api/eventos/{id}
+        + update($id) : PUT /api/eventos/{id}
+        + destroy($id) : DELETE /api/eventos/{id}
+        --
+        <color:blue>Features:</color>
+        • Eager loading (asistentes, ponentes)
+        • Enhanced validation
+        • Date validation (no past events)
+        • Detailed error responses
+    }
+
+    class AsistenteController {
+        + index() : GET /api/asistentes
+        + store() : POST /api/asistentes
+        + show($id) : GET /api/asistentes/{id}
+        + update($id) : PUT /api/asistentes/{id}
+        + destroy($id) : DELETE /api/asistentes/{id}
+        --
+        <color:blue>Features:</color>
+        • Eager loading (evento)
+        • Email validation
+        • Unique email per event validation
+        • Foreign key existence validation
+    }
+
+    class PonenteController {
+        + index() : GET /api/ponentes
+        + store() : POST /api/ponentes
+        + show($id) : GET /api/ponentes/{id}
+        + update($id) : PUT /api/ponentes/{id}
+        + destroy($id) : DELETE /api/ponentes/{id}
+        --
+        <color:blue>Features:</color>
+        • Basic CRUD operations
+        • Text field support for biografia
+        • Ready for relationship management
+    }
+}
+
+EventoController ..> Evento : "manages"
+AsistenteController ..> Asistente : "manages"
+PonenteController ..> Ponente : "manages"
+
+' ============================================================================
+' VALIDATION RULES
+' ============================================================================
+
+note bottom of EventoController : <color:green><b>Enhanced Validation</b></color>\n• titulo: required|string|max:255\n• descripcion: required|string|max:10000\n• fecha_inicio: required|date|after_or_equal:today\n• fecha_fin: required|date|after_or_equal:fecha_inicio\n• ubicacion: required|string|max:255
+
+note bottom of AsistenteController : <color:green><b>Enhanced Validation</b></color>\n• nombre: required|string|max:255\n• email: required|email|unique per event\n• telefono: required|string|max:20\n• evento_id: required|integer|exists:eventos,id
+
+note bottom of PonenteController : <color:green><b>Basic Validation</b></color>\n• nombre: required|string|max:255\n• biografia: required|text\n• especialidad: required|string|max:255
+
+' ============================================================================
+' DATABASE INFORMATION
+' ============================================================================
+
+note bottom : <color:red><b>Database: MariaDB</b></color>\n<color:blue><b>Laravel Version: 11.x</b></color>\n<color:green><b>Key Features:</b></color>\n• Foreign key constraints with CASCADE DELETE\n• Unique constraints for data integrity\n• Performance indexes on frequently queried fields\n• TEXT fields for long content (descriptions, biographies)\n• Timestamps on all tables\n• Optimized many-to-many relationships\n\n<color:purple><b>Migration History:</b></color>\n• create_eventos_table (with TEXT + indexes)\n• create_ponentes_table\n• create_asistentes_table (with constraints)\n• create_evento_ponente_table (pivot)
+
+@enduml

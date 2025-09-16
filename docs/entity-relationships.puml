@@ -1,0 +1,119 @@
+@startuml INFOTEC Entity Relationships
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BackgroundColor<<Entity>> #E1F5FE
+    BackgroundColor<<Pivot>> #FFF3E0
+    BorderColor #1976D2
+    ArrowColor #1976D2
+}
+
+title INFOTEC - Entity Relationship Diagram
+subtitle Laravel 11 Event Management System
+
+' ============================================================================
+' ENTITIES
+' ============================================================================
+
+class Evento <<Entity>> {
+    + id: bigint PK
+    --
+    + titulo: varchar(255) 🔍
+    + descripcion: text 📝
+    + fecha_inicio: date 🔍
+    + fecha_fin: date 🔍
+    + ubicacion: varchar(255)
+    --
+    + created_at: timestamp
+    + updated_at: timestamp
+    ==
+    <color:blue>**Relationships**</color>
+    + asistentes(): hasMany
+    + ponentes(): belongsToMany
+}
+
+class Ponente <<Entity>> {
+    + id: bigint PK
+    --
+    + nombre: varchar(255)
+    + biografia: text 📝
+    + especialidad: varchar(255)
+    --
+    + created_at: timestamp
+    + updated_at: timestamp
+    ==
+    <color:blue>**Relationships**</color>
+    + eventos(): belongsToMany
+}
+
+class Asistente <<Entity>> {
+    + id: bigint PK
+    --
+    + nombre: varchar(255)
+    + email: varchar(255) ✉️
+    + telefono: varchar(255)
+    + evento_id: bigint FK
+    --
+    + created_at: timestamp
+    + updated_at: timestamp
+    ==
+    <color:blue>**Relationships**</color>
+    + evento(): belongsTo
+}
+
+class EventoPonente <<Pivot>> {
+    + id: bigint PK
+    --
+    + evento_id: bigint FK
+    + ponente_id: bigint FK
+    --
+    + created_at: timestamp
+    + updated_at: timestamp
+}
+
+' ============================================================================
+' RELATIONSHIPS
+' ============================================================================
+
+Evento ||--o{ Asistente : "1:N\n(hasMany/belongsTo)"
+Evento ||--o{ EventoPonente : ""
+EventoPonente }o--|| Ponente : ""
+
+' ============================================================================
+' RELATIONSHIP ANNOTATIONS
+' ============================================================================
+
+note on link : <color:green>**CASCADE DELETE**</color>\nWhen evento is deleted,\nall asistentes are deleted
+
+note on link : <color:purple>**MANY-TO-MANY**</color>\nPonentes can participate\nin multiple eventos
+
+' ============================================================================
+' CONSTRAINTS NOTES
+' ============================================================================
+
+note top of Evento : 🎯 **Event Entity**\n• Performance indexes on searchable fields\n• TEXT field for long descriptions\n• Date validation (no past events)
+
+note top of Ponente : 👨‍🏫 **Speaker Entity**\n• Can speak at multiple events\n• Long biographies supported
+
+note right of Asistente : 🎫 **Attendee Entity**\n• Unique email per event\n• CASCADE DELETE with evento
+
+note bottom of EventoPonente : 🔗 **Pivot Table**\n• Unique (evento_id, ponente_id)\n• CASCADE DELETE from both sides
+
+' ============================================================================
+' LEGEND
+' ============================================================================
+
+legend bottom left
+    <color:blue>**Symbols Legend**</color>
+    🔍 = Indexed field
+    📝 = TEXT field (long content)
+    ✉️ = Email field (validated)
+    PK = Primary Key
+    FK = Foreign Key
+    
+    <color:green>**Relationship Types**</color>
+    1:N = One-to-Many
+    M:N = Many-to-Many (via pivot)
+endlegend
+
+@enduml

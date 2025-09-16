@@ -1,0 +1,229 @@
+@startuml INFOTEC API Architecture
+!theme plain
+skinparam {
+    backgroundColor #FAFAFA
+    componentStyle rectangle
+    packageStyle rectangle
+}
+
+title INFOTEC - API Architecture & Endpoints
+subtitle Laravel 11 RESTful API with Enhanced Validation
+
+' ============================================================================
+' CLIENT LAYER
+' ============================================================================
+
+package "Client Applications" as ClientLayer #E8F5E8 {
+    component "Web Frontend" as WebApp
+    component "Mobile App" as MobileApp
+    component "Third-party API" as ThirdParty
+}
+
+' ============================================================================
+' API LAYER
+' ============================================================================
+
+package "Laravel 11 API" as APILayer #E3F2FD {
+    
+    ' Route Layer
+    package "Routes (api.php)" as RouteLayer #F3E5F5 {
+        component "GET /api/eventos" as GetEventos
+        component "POST /api/eventos" as PostEventos
+        component "GET /api/eventos/{id}" as GetEvento
+        component "PUT /api/eventos/{id}" as PutEvento
+        component "DELETE /api/eventos/{id}" as DeleteEvento
+        
+        component "GET /api/ponentes" as GetPonentes
+        component "POST /api/ponentes" as PostPonentes
+        component "GET /api/ponentes/{id}" as GetPonente
+        component "PUT /api/ponentes/{id}" as PutPonente
+        component "DELETE /api/ponentes/{id}" as DeletePonente
+        
+        component "GET /api/asistentes" as GetAsistentes
+        component "POST /api/asistentes" as PostAsistentes
+        component "GET /api/asistentes/{id}" as GetAsistente
+        component "PUT /api/asistentes/{id}" as PutAsistente
+        component "DELETE /api/asistentes/{id}" as DeleteAsistente
+    }
+    
+    ' Controller Layer
+    package "Controllers" as ControllerLayer #FFF3E0 {
+        
+        class EventoController {
+            + index() : JsonResponse
+            + store(Request) : JsonResponse
+            + show(id) : JsonResponse
+            + update(Request, id) : JsonResponse
+            + destroy(id) : JsonResponse
+            --
+            <color:blue>**Features**</color>
+            • Eager loading (asistentes, ponentes)
+            • Enhanced validation
+            • Date validation (no past events)
+            • Detailed error responses
+            --
+            <color:green>**Validation Rules**</color>
+            • titulo: required|string|max:255
+            • descripcion: required|string|max:10000
+            • fecha_inicio: required|date|after_or_equal:today
+            • fecha_fin: required|date|after_or_equal:fecha_inicio
+            • ubicacion: required|string|max:255
+        }
+        
+        class AsistenteController {
+            + index() : JsonResponse
+            + store(Request) : JsonResponse
+            + show(id) : JsonResponse
+            + update(Request, id) : JsonResponse
+            + destroy(id) : JsonResponse
+            --
+            <color:blue>**Features**</color>
+            • Eager loading (evento)
+            • Email validation
+            • Unique email per event validation
+            • Foreign key existence validation
+            --
+            <color:green>**Validation Rules**</color>
+            • nombre: required|string|max:255
+            • email: required|email|unique per event
+            • telefono: required|string|max:20
+            • evento_id: required|integer|exists:eventos,id
+        }
+        
+        class PonenteController {
+            + index() : JsonResponse
+            + store(Request) : JsonResponse
+            + show(id) : JsonResponse
+            + update(Request, id) : JsonResponse
+            + destroy(id) : JsonResponse
+            --
+            <color:blue>**Features**</color>
+            • Basic CRUD operations
+            • Text field support for biografia
+            • Ready for relationship management
+            --
+            <color:green>**Validation Rules**</color>
+            • nombre: required|string|max:255
+            • biografia: required|text
+            • especialidad: required|string|max:255
+        }
+    }
+}
+
+' ============================================================================
+' MODEL LAYER
+' ============================================================================
+
+package "Eloquent Models" as ModelLayer #E8F5E8 {
+    class Evento {
+        + fillable: [titulo, descripcion, fecha_inicio, fecha_fin, ubicacion]
+        + asistentes(): hasMany
+        + ponentes(): belongsToMany
+    }
+    
+    class Asistente {
+        + fillable: [nombre, email, telefono, evento_id]
+        + evento(): belongsTo
+    }
+    
+    class Ponente {
+        + fillable: [nombre, biografia, especialidad]
+        + eventos(): belongsToMany
+    }
+}
+
+' ============================================================================
+' DATABASE LAYER
+' ============================================================================
+
+package "MariaDB Database" as DatabaseLayer #FFEBEE {
+    database "eventos" as EventosTable {
+        - id (PK)
+        - titulo (indexed)
+        - descripcion (text)
+        - fecha_inicio (indexed)
+        - fecha_fin (indexed)
+        - ubicacion
+        - timestamps
+    }
+    
+    database "asistentes" as AsistentesTable {
+        - id (PK)
+        - nombre
+        - email (unique per event)
+        - telefono
+        - evento_id (FK, indexed)
+        - timestamps
+    }
+    
+    database "ponentes" as PonentesTable {
+        - id (PK)
+        - nombre
+        - biografia (text)
+        - especialidad
+        - timestamps
+    }
+    
+    database "evento_ponente" as PivotTable {
+        - id (PK)
+        - evento_id (FK, indexed)
+        - ponente_id (FK, indexed)
+        - unique(evento_id, ponente_id)
+        - timestamps
+    }
+}
+
+' ============================================================================
+' CONNECTIONS
+' ============================================================================
+
+' Client to API
+ClientLayer --> RouteLayer : "HTTP Requests\n(JSON)"
+
+' Routes to Controllers
+GetEventos --> EventoController : "index()"
+PostEventos --> EventoController : "store()"
+GetEvento --> EventoController : "show()"
+PutEvento --> EventoController : "update()"
+DeleteEvento --> EventoController : "destroy()"
+
+GetAsistentes --> AsistenteController : "index()"
+PostAsistentes --> AsistenteController : "store()"
+GetAsistente --> AsistenteController : "show()"
+PutAsistente --> AsistenteController : "update()"
+DeleteAsistente --> AsistenteController : "destroy()"
+
+GetPonentes --> PonenteController : "index()"
+PostPonentes --> PonenteController : "store()"
+GetPonente --> PonenteController : "show()"
+PutPonente --> PonenteController : "update()"
+DeletePonente --> PonenteController : "destroy()"
+
+' Controllers to Models
+EventoController --> Evento : "uses"
+AsistenteController --> Asistente : "uses"
+PonenteController --> Ponente : "uses"
+
+' Models to Database
+Evento --> EventosTable : "queries"
+Asistente --> AsistentesTable : "queries"
+Ponente --> PonentesTable : "queries"
+
+' Database relationships
+EventosTable ||--o{ AsistentesTable : "1:N"
+EventosTable ||--o{ PivotTable : "1:N"
+PonentesTable ||--o{ PivotTable : "1:N"
+
+' ============================================================================
+' RESPONSE FORMATS
+' ============================================================================
+
+note bottom of APILayer : <color:blue>**Standard Response Formats**</color>\n\n**Success Response:**\n{\n  "eventos": [...],\n  "status": 200\n}\n\n**Error Response:**\n{\n  "message": "Error de validación",\n  "errors": {...validation errors...},\n  "status": 400\n}\n\n**Features:**\n• JSON responses\n• HTTP status codes\n• Detailed validation errors\n• Eager loaded relationships
+
+' ============================================================================
+' MIDDLEWARE & FEATURES
+' ============================================================================
+
+note top of APILayer : <color:green>**API Features**</color>\n• RESTful endpoints\n• JSON request/response\n• Eloquent ORM\n• Enhanced validation\n• Eager loading\n• Foreign key validation\n• Unique constraints\n• Detailed error messages\n• Laravel 11 best practices
+
+@enduml
