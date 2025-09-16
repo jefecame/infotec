@@ -61,37 +61,63 @@ services:
       - composer_cache:/root/.composer/cache
     command: >
       bash -c "
-        echo '🚀 Iniciando Laravel automático...'
+        echo '🚀 INFOTEC - Configuración automática de Laravel'
         
         # Esperar MariaDB
+        echo '⏳ Esperando MariaDB...'
         for i in {1..30}; do
-          mysqladmin ping -h mariadb -u \$$LARAVEL_DATABASE_USER -p\$$LARAVEL_DATABASE_PASSWORD --silent && break
+          if mysqladmin ping -h mariadb -u \$$LARAVEL_DATABASE_USER -p\$$LARAVEL_DATABASE_PASSWORD --silent 2>/dev/null; then
+            echo '✅ MariaDB conectado'
+            break
+          fi
           sleep 2
         done
         
         cd /app
         
         # Crear Laravel si no existe
-        if [ ! -f artisan ]; then
-          composer create-project laravel/laravel:\$$LARAVEL_VERSION . --no-interaction --quiet
+        if [ ! -f artisan ] && [ ! -f composer.json ]; then
+          echo '📁 Creando nuevo proyecto Laravel...'
+          
+          # Preservar .gitignore personalizado
+          [ -f .gitignore ] && cp .gitignore /tmp/custom-gitignore
+          
+          # Crear proyecto Laravel
+          composer create-project laravel/laravel:\$$LARAVEL_VERSION /tmp/laravel --prefer-dist --no-interaction
+          cp -r /tmp/laravel/. . && rm -rf /tmp/laravel
+          
+          # Restaurar .gitignore personalizado
+          [ -f /tmp/custom-gitignore ] && cp /tmp/custom-gitignore .gitignore
+          
+          echo '✅ Laravel creado exitosamente'
         fi
+        
+        # Instalar dependencias
+        [ ! -d vendor ] || [ ! -f vendor/autoload.php ] && composer install --no-interaction --optimize-autoloader
         
         # Configurar Laravel
         [ ! -f .env ] && cp .env.example .env
-        [ ! -d vendor ] && composer install --no-interaction --quiet
         
-        # Configurar base de datos en .env
+        # Configurar base de datos
+        sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env
         sed -i 's/DB_HOST=.*/DB_HOST=mariadb/' .env
+        sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
         sed -i \"s/DB_DATABASE=.*/DB_DATABASE=\$$LARAVEL_DATABASE_NAME/\" .env
         sed -i \"s/DB_USERNAME=.*/DB_USERNAME=\$$LARAVEL_DATABASE_USER/\" .env
         sed -i \"s/DB_PASSWORD=.*/DB_PASSWORD=\$$LARAVEL_DATABASE_PASSWORD/\" .env
         
-        # Preparar Laravel
-        php artisan key:generate --force --no-interaction
-        php artisan migrate --force --no-interaction
+        # Generar APP_KEY si no existe
+        grep -q 'APP_KEY=base64:' .env || php artisan key:generate --force
+        
+        # Migrar base de datos
+        php artisan migrate --force
+        
+        # Configurar permisos
         chmod -R 775 storage bootstrap/cache 2>/dev/null || true
         
-        echo '✅ Laravel listo → http://localhost:8000'
+        echo '🎉 Laravel listo en http://localhost:8000'
+        
+        # Iniciar servidor
         exec php artisan serve --host=0.0.0.0 --port=8000
       "
     depends_on:

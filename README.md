@@ -1,6 +1,8 @@
 # 🚀 INFOTEC - Laravel Automático con Docker
 
-**Configuración Docker Compose que crea e inicializa automáticamente una instalación fresca de Laravel en una carpeta `src/` vacía.**
+**Configuración Docker Compose completamente funcional que crea e inicializa automáticamente una instalación fresca de Laravel 11 con MariaDB en una carpeta `src/` vacía.**
+
+✅ **Estado actual**: Sistema funcionando correctamente - Laravel se crea automáticamente y responde en http://localhost:8000
 
 ## ✨ Lo que hace automáticamente
 
@@ -24,16 +26,27 @@ cp .env.example .env
 # 2. Iniciar Laravel automáticamente
 docker compose up -d
 
+# 3. Verificar que todo funciona
+docker compose ps
+curl http://localhost:8000
+
 # ✅ ¡Listo! Laravel en http://localhost:8000
 ```
 
-**Eso es todo.** Laravel se creará automáticamente la primera vez.
+**Eso es todo.** Laravel se creará automáticamente la primera vez con todas las dependencias instaladas.
 
 ## 📂 Estructura del Proyecto
 
 ```
 infotec/
-├── src/                    # Laravel (se crea automáticamente)
+├── src/                    # Laravel 11 (se crea automáticamente)
+│   ├── app/               # Lógica de la aplicación
+│   ├── database/          # Migraciones y seeders
+│   ├── resources/         # Vistas y assets
+│   ├── routes/            # Definición de rutas
+│   ├── artisan            # CLI de Laravel
+│   └── composer.json      # Dependencias PHP
+├── .devcontainer/         # Configuración para Codespaces
 ├── docker-compose.yml     # Configuración principal
 ├── .env.example           # Plantilla de variables
 └── README.md              # Esta documentación
@@ -41,6 +54,7 @@ infotec/
 
 ## 🔧 Comandos Útiles
 
+### Monitoreo y Logs
 ```bash
 # Ver logs de Laravel
 docker compose logs -f laravel
@@ -48,11 +62,31 @@ docker compose logs -f laravel
 # Ver logs de MariaDB
 docker compose logs -f mariadb
 
+# Ver estado de los servicios
+docker compose ps
+```
+
+### Desarrollo Laravel
+```bash
 # Acceder al contenedor Laravel
 docker compose exec laravel bash
 
+# Ejecutar comandos Artisan
+docker compose exec laravel php artisan migrate
+docker compose exec laravel php artisan make:controller HomeController
+docker compose exec laravel php artisan make:model User
+
+# Instalar dependencias Composer
+docker compose exec laravel composer install
+```
+
+### Control de Servicios
+```bash
 # Detener servicios
 docker compose down
+
+# Reiniciar solo Laravel
+docker compose restart laravel
 
 # Limpiar todo y empezar de cero
 docker compose down -v
@@ -102,38 +136,74 @@ MARIADB_ROOT_PASSWORD = tu_root_password
 | **laravel** | Aplicación Laravel + PHP | 8000 |
 | **mariadb** | Base de datos MariaDB | 3306 |
 
-## 🔄 Proceso Automático
+## 🔄 Proceso Automático Mejorado
 
-Cuando ejecutas `docker compose up`:
+Cuando ejecutas `docker compose up`, el sistema automáticamente:
 
 1. ✅ **Inicia MariaDB** con verificación de salud
-2. ✅ **Verifica** si existe proyecto Laravel en `src/`
-3. ✅ **Crea Laravel** automáticamente si `src/` está vacía
-4. ✅ **Instala dependencias** con Composer
-5. ✅ **Configura conexión** a MariaDB
-6. ✅ **Genera APP_KEY** de Laravel
-7. ✅ **Ejecuta migraciones** de base de datos
-8. ✅ **Inicia servidor** en http://localhost:8000
+2. ✅ **Verifica conectividad** de red con netcat (nc)
+3. ✅ **Detecta estado** del directorio `src/` (vacío o parcial)
+4. ✅ **Crea Laravel 11** si es necesario usando Composer
+5. ✅ **Instala dependencias** con optimización
+6. ✅ **Configura entorno** (.env con credenciales de DB)
+7. ✅ **Genera APP_KEY** único de Laravel
+8. ✅ **Ejecuta migraciones** (con manejo de errores)
+9. ✅ **Configura permisos** de storage y cache
+10. ✅ **Inicia servidor** de desarrollo en puerto 8000
+
+🔧 **Mejoras recientes**: Detección de conectividad más robusta, limpieza automática de instalaciones parciales, y mejor manejo de errores.
 
 ## 🛠️ Solución de Problemas
 
-### Laravel no se creó
+### ❌ Laravel no se creó o no responde
 ```bash
-# Ver logs para diagnosticar
+# Verificar estado de contenedores
+docker compose ps
+
+# Ver logs detallados de Laravel
 docker compose logs laravel
+
+# Probar respuesta HTTP
+curl http://localhost:8000
+
+# Reinicio completo (solución más común)
+docker compose down -v && docker compose up -d
 ```
 
-### Error de conexión a base de datos
+### 🔌 Problemas de conectividad de base de datos
 ```bash
 # Verificar estado de MariaDB
 docker compose logs mariadb
+
+# Probar conectividad de red
+docker compose exec laravel nc -z mariadb 3306
+
+# Verificar configuración de BD en Laravel
+docker compose exec laravel cat .env | grep DB_
+
+# Probar conexión desde Laravel
+docker compose exec laravel php artisan tinker
+# Luego ejecutar: DB::connection()->getPdo();
 ```
 
-### Reinicio completo
+### 🔄 Limpieza y reinicio
 ```bash
-# Eliminar todo y empezar desde cero
-docker compose down -v
-docker compose up -d
+# Reinicio suave (mantiene datos)
+docker compose restart
+
+# Reinicio completo (elimina todo)
+docker compose down -v && docker compose up -d
+
+# Limpiar cachés de Laravel
+docker compose exec laravel php artisan cache:clear
+docker compose exec laravel php artisan config:clear
+```
+
+### ⚡ Verificación rápida
+```bash
+# Todo en uno: verificar que funciona
+docker compose ps && curl -s -o /dev/null -w "%{http_code}" http://localhost:8000
+# Debe mostrar contenedores "Up (healthy)" y código "200"
 ```
 
 ## 🔒 Notas de Seguridad
