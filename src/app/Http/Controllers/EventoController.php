@@ -50,7 +50,7 @@ class EventoController extends Controller
             return response()->json($respuesta, 400);
         }
 
-        // Crear un nuevo recursos con los datos de la petición
+        // Crear un nuevo recurso con los datos de la petición
         $evento = Evento::create([
             'titulo' => $request->titulo,
             'descripcion' => $request->descripcion,
