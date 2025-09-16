@@ -2,15 +2,19 @@
 
 **Configuración Docker Compose completamente funcional que crea e inicializa automáticamente una instalación fresca de Laravel 11 con MariaDB en una carpeta `src/` vacía.**
 
-✅ **Estado actual**: Sistema funcionando correctamente - Laravel se crea automáticamente y responde en http://localhost:8000
+✅ **Estado actual**: Sistema funcionando al 100% - Laravel 11 con MariaDB se crea automáticamente y responde en http://localhost:8000
+
+🗄️ **Base de datos**: Configurado para usar **MariaDB** (no SQLite) con conexión automática y migraciones ejecutándose correctamente.
 
 ## ✨ Lo que hace automáticamente
 
-- 🏗️ **Crea Laravel** si la carpeta `src/` está vacía
-- 🗄️ **Configura MariaDB** con conexión automática
-- ⚙️ **Genera APP_KEY** y configura el entorno
-- 🔄 **Ejecuta migraciones** de base de datos
-- 🚀 **Inicia el servidor** de desarrollo
+- 🏗️ **Crea Laravel 11** completo si la carpeta `src/` está vacía
+- 🗄️ **Configura MariaDB** con conexión automática (no SQLite)
+- ⚙️ **Genera APP_KEY** único y configura el entorno
+- 🔄 **Ejecuta migraciones** de base de datos automáticamente
+- 📦 **Instala dependencias** Composer con optimización
+- 🚀 **Inicia el servidor** de desarrollo en puerto 8000
+- 🔧 **Configura permisos** de storage y cache
 
 ## ⚡ Inicio Rápido
 
@@ -98,13 +102,21 @@ docker compose up -d
 Las variables en `.env` que puedes personalizar:
 
 ```bash
-# Base de datos
+# Base de datos MariaDB
 MARIADB_DATABASE=infotec_laravel
 MARIADB_USER=usuario_laravel
 MARIADB_PASSWORD=mi_password_seguro_123
 MARIADB_ROOT_PASSWORD=root_password_456
 
-# Laravel
+# Laravel - Configuración de base de datos
+DB_CONNECTION=mysql
+DB_HOST=mariadb
+DB_PORT=3306
+DB_DATABASE=infotec_laravel
+DB_USERNAME=usuario_laravel
+DB_PASSWORD=mi_password_seguro_123
+
+# Laravel - General
 LARAVEL_VERSION=11.*
 ```
 
@@ -151,7 +163,12 @@ Cuando ejecutas `docker compose up`, el sistema automáticamente:
 9. ✅ **Configura permisos** de storage y cache
 10. ✅ **Inicia servidor** de desarrollo en puerto 8000
 
-🔧 **Mejoras recientes**: Detección de conectividad más robusta, limpieza automática de instalaciones parciales, y mejor manejo de errores.
+🔧 **Mejoras recientes**: 
+- Configuración automática de **MariaDB** (reemplaza SQLite por defecto)
+- Detección de conectividad con **netcat** más confiable
+- Variables de entorno de Laravel configuradas automáticamente
+- Limpieza automática de instalaciones parciales
+- Mejor manejo de errores en migraciones
 
 ## 🛠️ Solución de Problemas
 
@@ -179,11 +196,13 @@ docker compose logs mariadb
 docker compose exec laravel nc -z mariadb 3306
 
 # Verificar configuración de BD en Laravel
-docker compose exec laravel cat .env | grep DB_
+docker compose exec laravel bash -c "cat .env | grep -E 'DB_|APP_KEY'"
+
+# Verificar estado de migraciones
+docker compose exec laravel php artisan migrate:status
 
 # Probar conexión desde Laravel
-docker compose exec laravel php artisan tinker
-# Luego ejecutar: DB::connection()->getPdo();
+docker compose exec laravel php artisan tinker --execute="echo 'DB: ' . DB::connection()->getPdo()->getAttribute(PDO::ATTR_CONNECTION_STATUS);"
 ```
 
 ### 🔄 Limpieza y reinicio
