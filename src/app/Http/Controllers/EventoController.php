@@ -16,8 +16,8 @@ class EventoController extends Controller
      */
     public function index()
     {
-        // Recuperar todos los recursos
-        $eventos = Evento::all();
+        // Recuperar todos los recursos con sus relaciones
+        $eventos = Evento::with(['asistentes', 'ponentes'])->get();
 
         // Retornar los recursos recuperados
         $respuesta = [
@@ -34,17 +34,18 @@ class EventoController extends Controller
     {
         // Validar que la petición contenga todos los datos necesarios
         $validator = Validator::make($request->all(), [
-            'titulo' => 'required',
-            'descripcion' => 'required',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'required|date',
-            'ubicacion' => 'required',
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'required|string|max:10000',
+            'fecha_inicio' => 'required|date|after_or_equal:today',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            'ubicacion' => 'required|string|max:255',
         ]);
 
         // Si la petición no contiene todos los datos necesarios, retornar un mensaje de error
         if ($validator->fails()) {
             $respuesta = [
-                'message' => 'Datos faltantes',
+                'message' => 'Error de validación',
+                'errors' => $validator->errors(),
                 'status' => 400, // Petición inválida
             ];
             return response()->json($respuesta, 400);
@@ -81,8 +82,8 @@ class EventoController extends Controller
      */
     public function show($id)
     {
-        // Recuperar el recurso especificado
-        $evento = Evento::find($id);
+        // Recuperar el recurso especificado con sus relaciones
+        $evento = Evento::with(['asistentes', 'ponentes'])->find($id);
 
         // Si el recurso no se pudo recuperar, retornar un mensaje de error
         if (!$evento) {
@@ -120,17 +121,18 @@ class EventoController extends Controller
 
         // Validar que la petición contenga todos los datos necesarios
         $validator = Validator::make($request->all(), [
-            'titulo' => 'required',
-            'descripcion' => 'required',
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'required|string|max:10000',
             'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'required|date',
-            'ubicacion' => 'required',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            'ubicacion' => 'required|string|max:255',
         ]);
 
         // Si la petición no contiene todos los datos necesarios, retornar un mensaje de error
         if ($validator->fails()) {
             $respuesta = [
-                'message' => 'Datos faltantes',
+                'message' => 'Error de validación',
+                'errors' => $validator->errors(),
                 'status' => 400, // Petición inválida
             ];
             return response()->json($respuesta, 400);

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ponentes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('biografia');
+            $table->text('biografia');
             $table->string('especialidad');
             $table->timestamps();
         });

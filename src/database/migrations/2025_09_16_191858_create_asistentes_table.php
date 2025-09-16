@@ -20,6 +20,9 @@ return new class extends Migration
             $table->unsignedBigInteger('evento_id');
             $table->foreign('evento_id')->references('id')->on('eventos')->onDelete('cascade');
             $table->index('evento_id');
+            
+            // Evitar emails duplicados por evento
+            $table->unique(['email', 'evento_id']);
 
             $table->timestamps();
         });

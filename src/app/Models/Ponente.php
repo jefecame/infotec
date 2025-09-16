@@ -12,4 +12,14 @@ class Ponente extends Model
         'biografia',
         'especialidad'
     ];
+
+    /**
+     * Relación con Eventos
+     * Un ponente puede participar en muchos eventos (many-to-many)
+     */
+    public function eventos()
+    {
+        return $this->belongsToMany(Evento::class, 'evento_ponente')
+                    ->withTimestamps();
+    }
 }

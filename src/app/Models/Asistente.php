@@ -13,4 +13,13 @@ class Asistente extends Model
         'telefono',
         'evento_id'
     ];
+
+    /**
+     * Relación con Evento
+     * Un asistente pertenece a un evento
+     */
+    public function evento()
+    {
+        return $this->belongsTo(Evento::class);
+    }
 }

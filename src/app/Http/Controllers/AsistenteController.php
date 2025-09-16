@@ -13,8 +13,8 @@ class AsistenteController extends Controller
      */
     public function index()
     {
-        // Recuperar todos los recursos
-        $asistentes = Asistente::all();
+        // Recuperar todos los recursos con su evento relacionado
+        $asistentes = Asistente::with('evento')->get();
 
         // Retornar los recursos recuperados
         $respuesta = [
@@ -31,16 +31,17 @@ class AsistenteController extends Controller
     {
         // Validar que la petición contenga todos los datos necesarios
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required',
-            'email' => 'required',
-            'telefono' => 'required',
-            'evento_id' => 'required',
+            'nombre' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:asistentes,email,NULL,id,evento_id,' . $request->evento_id,
+            'telefono' => 'required|string|max:20',
+            'evento_id' => 'required|integer|exists:eventos,id',
         ]);
 
         // Si la petición no contiene todos los datos necesarios, retornar un mensaje de error
         if ($validator->fails()) {
             $respuesta = [
-                'message' => 'Datos faltantes',
+                'message' => 'Error de validación',
+                'errors' => $validator->errors(),
                 'status' => 400, // Petición inválida
             ];
             return response()->json($respuesta, 400);
@@ -76,8 +77,8 @@ class AsistenteController extends Controller
      */
     public function show($id)
     {
-        // Recuperar el recurso especificado
-        $asistente = Asistente::find($id);
+        // Recuperar el recurso especificado con su evento relacionado
+        $asistente = Asistente::with('evento')->find($id);
 
         // Si el recurso no se pudo recuperar, retornar un mensaje de error
         if (!$asistente) {
@@ -115,27 +116,27 @@ class AsistenteController extends Controller
 
         // Validar que la petición contenga todos los datos necesarios
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required',
-            'email' => 'required',
-            'telefono' => 'required',
-            'evento_id' => 'required',
+            'nombre' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:asistentes,email,' . $id . ',id,evento_id,' . $request->evento_id,
+            'telefono' => 'required|string|max:20',
+            'evento_id' => 'required|integer|exists:eventos,id',
         ]);
 
         // Si la petición no contiene todos los datos necesarios, retornar un mensaje de error
         if ($validator->fails()) {
             $respuesta = [
-                'message' => 'Datos faltantes',
+                'message' => 'Error de validación',
+                'errors' => $validator->errors(),
                 'status' => 400, // Petición inválida
             ];
             return response()->json($respuesta, 400);
         }
 
         // Actualizar el recurso especificado con los datos de la petición
-        $asistente->titulo = $request->titulo;
-        $asistente->descripcion = $request->descripcion;
-        $asistente->fecha_inicio = $request->fecha_inicio;
-        $asistente->fecha_fin = $request->fecha_fin;
-        $asistente->ubicacion = $request->ubicacion;
+        $asistente->nombre = $request->nombre;
+        $asistente->email = $request->email;
+        $asistente->telefono = $request->telefono;
+        $asistente->evento_id = $request->evento_id;
         $asistente->save();
 
         // Retornar el recurso actualizado

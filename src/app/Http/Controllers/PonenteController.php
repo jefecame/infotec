@@ -128,11 +128,9 @@ class PonenteController extends Controller
         }
 
         // Actualizar el recurso especificado con los datos de la petición
-        $ponente->titulo = $request->titulo;
-        $ponente->descripcion = $request->descripcion;
-        $ponente->fecha_inicio = $request->fecha_inicio;
-        $ponente->fecha_fin = $request->fecha_fin;
-        $ponente->ubicacion = $request->ubicacion;
+        $ponente->nombre = $request->nombre;
+        $ponente->biografia = $request->biografia;
+        $ponente->especialidad = $request->especialidad;
         $ponente->save();
 
         // Retornar el recurso actualizado
