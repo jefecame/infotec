@@ -1,242 +1,212 @@
-# 🚀 INFOTEC - Laravel Automático con Docker
+# 🚀 INFOTEC - Sistema de Eventos Laravel
 
-**Configuración Docker Compose completamente funcional que crea e inicializa automáticamente una instalación fresca de Laravel 11 con MariaDB en una carpeta `src/` vacía.**
+**Sistema automatizado de gestión de eventos desarrollado con Laravel 11 y MariaDB usando Docker Compose. Configuración completa lista para desarrollo con un solo comando.**
 
-✅ **Estado actual**: Sistema funcionando al 100% - Laravel 11 con MariaDB se crea automáticamente y responde en http://localhost:8000
+✅ **Estado**: Funcionando completamente - Laravel 11 + MariaDB + API REST en http://localhost:8000
 
-🗄️ **Base de datos**: Configurado para usar **MariaDB** (no SQLite) con conexión automática y migraciones ejecutándose correctamente.
+## 📊 Arquitectura del Sistema
 
-## ✨ Lo que hace automáticamente
+### 🏗️ Diagrama de Base de Datos
 
-- 🏗️ **Crea Laravel 11** completo si la carpeta `src/` está vacía
-- 🗄️ **Configura MariaDB** con conexión automática (no SQLite)
-- ⚙️ **Genera APP_KEY** único y configura el entorno
-- 🔄 **Ejecuta migraciones** de base de datos automáticamente
-- 📦 **Instala dependencias** Composer con optimización
-- 🚀 **Inicia el servidor** de desarrollo en puerto 8000
-- 🔧 **Configura permisos** de storage y cache
+![Diagrama de Modelos INFOTEC](https://www.plantuml.com/plantuml/svg/ZP9DRjim48NtFeMNMrWfUhOXGrjqh39AXcjqwJccKaRZ8dNgQlQO7xywdyQeEoAK7sEURxTpNl_3nM6pYHKA0KrQdQ9LGhq3CqwdY1bfXmK5mYjBm9zOZoY9f6cZ_4Q9e5PgjgZZP4nCbEQHXIc8PjUbGX2oNK8nGM5a7nv9iIa49Jgr6qNE8N8fO9W9cJKQ9Gs5QOo)
+
+> **Diagrama en vivo**: [Ver diagrama completo en PlantUML](docs/models-diagram-basic.puml) 📁
+
+### 🎯 Funcionalidad Principal
+- **Gestión de Eventos**: Crear, editar y eliminar eventos con fechas y ubicaciones
+- **Registro de Ponentes**: Administrar ponentes con biografías y especialidades
+- **Control de Asistentes**: Registro único por evento con validación de email
+- **API REST**: Endpoints completos para todas las entidades
+- **Base de datos**: MariaDB con relaciones optimizadas y restricciones de integridad
+
+## ✨ Configuración Automática
+
+- 🏗️ **Laravel 11** completamente configurado
+- 🗄️ **MariaDB** con conexión automática y optimizada
+- 🔄 **Migraciones** ejecutadas automáticamente
+- 📦 **Dependencias** instaladas con Composer
+- 🚀 **Servidor** listo en puerto 8000
+- ⚙️ **Entorno** configurado con variables seguras
 
 ## ⚡ Inicio Rápido
 
 ### Requisitos
-- Docker Desktop instalado y ejecutándose
+- Docker Desktop instalado
 
-### Usar el workspace
+### Iniciar el Sistema
 
 ```bash
-# 1. Configurar variables de entorno (una sola vez)
+# 1. Configurar entorno
 cp .env.example .env
 
-# 2. Iniciar Laravel automáticamente
+# 2. Iniciar servicios
 docker compose up -d
 
-# 3. Verificar que todo funciona
+# 3. Verificar
 docker compose ps
-curl http://localhost:8000
-
-# ✅ ¡Listo! Laravel en http://localhost:8000
 ```
 
-**Eso es todo.** Laravel se creará automáticamente la primera vez con todas las dependencias instaladas.
+**¡Listo!** Accede a http://localhost:8000 - Laravel se configura automáticamente.
 
 ## 📂 Estructura del Proyecto
 
 ```
 infotec/
-├── src/                    # Laravel 11 (se crea automáticamente)
-│   ├── app/               # Lógica de la aplicación
-│   ├── database/          # Migraciones y seeders
-│   ├── resources/         # Vistas y assets
-│   ├── routes/            # Definición de rutas
-│   ├── artisan            # CLI de Laravel
-│   └── composer.json      # Dependencias PHP
-├── .devcontainer/         # Configuración para Codespaces
-├── docker-compose.yml     # Configuración principal
-├── .env.example           # Plantilla de variables
-└── README.md              # Esta documentación
+├── 📁 src/                # Aplicación Laravel 11
+│   ├── app/Models/        # Modelos: Evento, Ponente, Asistente
+│   ├── app/Http/Controllers/Api/  # Controladores API REST
+│   ├── database/migrations/       # Estructura de base de datos
+│   ├── routes/api.php     # Rutas API (/api/eventos, /api/ponentes)
+│   └── artisan            # CLI de Laravel
+├── 📁 docs/               # Documentación y diagramas
+│   └── models-diagram-basic.puml  # Diagrama PlantUML
+├── 📁 database/           # Scripts SQL y datos de prueba
+├── 🐳 docker-compose.yml  # Orquestación de servicios
+└── 📄 README.md           # Esta documentación
 ```
 
 ## 🔧 Comandos Útiles
 
-### Monitoreo y Logs
+### Desarrollo
 ```bash
-# Ver logs de Laravel
-docker compose logs -f laravel
-
-# Ver logs de MariaDB
-docker compose logs -f mariadb
-
-# Ver estado de los servicios
-docker compose ps
-```
-
-### Desarrollo Laravel
-```bash
-# Acceder al contenedor Laravel
+# Acceder al contenedor
 docker compose exec laravel bash
 
-# Ejecutar comandos Artisan
+# Comandos Artisan frecuentes
 docker compose exec laravel php artisan migrate
-docker compose exec laravel php artisan make:controller HomeController
-docker compose exec laravel php artisan make:model User
+docker compose exec laravel php artisan make:model Evento
+docker compose exec laravel php artisan make:controller Api/EventoController
 
-# Instalar dependencias Composer
+# Instalar dependencias
 docker compose exec laravel composer install
 ```
 
-### Control de Servicios
+### Monitoreo
 ```bash
-# Detener servicios
-docker compose down
+# Ver logs
+docker compose logs -f laravel
+docker compose logs -f mariadb
 
-# Reiniciar solo Laravel
-docker compose restart laravel
-
-# Limpiar todo y empezar de cero
-docker compose down -v
-docker compose up -d
+# Estado de servicios
+docker compose ps
 ```
 
-## ⚙️ Configuración
+### Control
+```bash
+# Detener
+docker compose down
 
-Las variables en `.env` que puedes personalizar:
+# Reiniciar completo
+docker compose down -v && docker compose up -d
+```
+
+## 🌐 API REST Endpoints
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/eventos` | Listar todos los eventos |
+| POST | `/api/eventos` | Crear nuevo evento |
+| GET | `/api/eventos/{id}` | Obtener evento específico |
+| PUT | `/api/eventos/{id}` | Actualizar evento |
+| DELETE | `/api/eventos/{id}` | Eliminar evento |
+| GET | `/api/ponentes` | Listar ponentes |
+| POST | `/api/ponentes` | Crear ponente |
+| GET | `/api/asistentes` | Listar asistentes |
+| POST | `/api/asistentes` | Registrar asistente |
+
+### Ejemplo de uso:
+```bash
+# Crear evento
+curl -X POST http://localhost:8000/api/eventos \
+  -H "Content-Type: application/json" \
+  -d '{"titulo":"Conferencia Tech","fecha_inicio":"2024-01-15","ubicacion":"Auditorio Central"}'
+
+# Listar eventos
+curl http://localhost:8000/api/eventos
+```
+
+## ⚙️ Variables de Entorno
 
 ```bash
-# Base de datos MariaDB
+# Base de datos
 MARIADB_DATABASE=infotec_laravel
 MARIADB_USER=usuario_laravel
 MARIADB_PASSWORD=mi_password_seguro_123
-MARIADB_ROOT_PASSWORD=root_password_456
 
-# Laravel - Configuración de base de datos
+# Laravel
 DB_CONNECTION=mysql
 DB_HOST=mariadb
 DB_PORT=3306
-DB_DATABASE=infotec_laravel
-DB_USERNAME=usuario_laravel
-DB_PASSWORD=mi_password_seguro_123
-
-# Laravel - General
-LARAVEL_VERSION=11.*
 ```
 
 ## 🌐 GitHub Codespaces
 
-Este workspace está optimizado para Codespaces. Simplemente:
+**Uso en Codespaces:**
+1. Abre el repositorio en Codespaces
+2. Ejecuta: `docker compose up -d`
+3. Codespaces detectará automáticamente el puerto 8000
 
-1. **Abre el repositorio en Codespaces**
-2. **Ejecuta:** `docker compose up -d`
-3. **¡Listo!** Codespaces detectará el puerto 8000 automáticamente
-
-### Configuración con Secrets (Opcional)
-
+### Secrets (Opcional)
 En `Settings → Secrets and variables → Codespaces`:
-
 ```
-MARIADB_DATABASE = tu_base_datos
-MARIADB_USER = tu_usuario
 MARIADB_PASSWORD = tu_password_seguro
 MARIADB_ROOT_PASSWORD = tu_root_password
 ```
 
-```
-
 ## 🐳 Servicios Docker
 
-| Servicio | Descripción | Puerto |
-|----------|-------------|---------|
-| **laravel** | Aplicación Laravel + PHP | 8000 |
-| **mariadb** | Base de datos MariaDB | 3306 |
+| Servicio | Descripción | Puerto | Estado |
+|----------|-------------|--------|--------|
+| **laravel** | API Laravel + PHP 8.3 | 8000 | 🟢 Activo |
+| **mariadb** | Base de datos MariaDB 11.4 | 3306 | 🟢 Activo |
 
-## 🔄 Proceso Automático Mejorado
+## 🔄 Proceso de Inicialización
 
-Cuando ejecutas `docker compose up`, el sistema automáticamente:
+Al ejecutar `docker compose up`, el sistema:
 
-1. ✅ **Inicia MariaDB** con verificación de salud
-2. ✅ **Verifica conectividad** de red con netcat (nc)
-3. ✅ **Detecta estado** del directorio `src/` (vacío o parcial)
-4. ✅ **Crea Laravel 11** si es necesario usando Composer
-5. ✅ **Instala dependencias** con optimización
-6. ✅ **Configura entorno** (.env con credenciales de DB)
-7. ✅ **Genera APP_KEY** único de Laravel
-8. ✅ **Ejecuta migraciones** (con manejo de errores)
-9. ✅ **Configura permisos** de storage y cache
-10. ✅ **Inicia servidor** de desarrollo en puerto 8000
-
-🔧 **Mejoras recientes**: 
-- Configuración automática de **MariaDB** (reemplaza SQLite por defecto)
-- Detección de conectividad con **netcat** más confiable
-- Variables de entorno de Laravel configuradas automáticamente
-- Limpieza automática de instalaciones parciales
-- Mejor manejo de errores en migraciones
+1. ✅ Inicia **MariaDB** con verificación de salud
+2. ✅ **Crea Laravel 11** si es necesario
+3. ✅ **Instala dependencias** automáticamente
+4. ✅ **Configura entorno** (.env con credenciales DB)
+5. ✅ **Ejecuta migraciones** de base de datos
+6. ✅ **Inicia servidor** en puerto 8000
 
 ## 🛠️ Solución de Problemas
 
-### ❌ Laravel no se creó o no responde
+### Verificación Rápida
 ```bash
-# Verificar estado de contenedores
+# Estado de servicios
 docker compose ps
 
-# Ver logs detallados de Laravel
-docker compose logs laravel
+# Probar API
+curl http://localhost:8000/api/eventos
 
-# Probar respuesta HTTP
-curl http://localhost:8000
-
-# Reinicio completo (solución más común)
-docker compose down -v && docker compose up -d
+# Ver logs si hay problemas
+docker compose logs -f laravel
 ```
 
-### 🔌 Problemas de conectividad de base de datos
+### Reinicio Completo
 ```bash
-# Verificar estado de MariaDB
-docker compose logs mariadb
-
-# Probar conectividad de red
-docker compose exec laravel nc -z mariadb 3306
-
-# Verificar configuración de BD en Laravel
-docker compose exec laravel bash -c "cat .env | grep -E 'DB_|APP_KEY'"
-
-# Verificar estado de migraciones
-docker compose exec laravel php artisan migrate:status
-
-# Probar conexión desde Laravel
-docker compose exec laravel php artisan tinker --execute="echo 'DB: ' . DB::connection()->getPdo()->getAttribute(PDO::ATTR_CONNECTION_STATUS);"
-```
-
-### 🔄 Limpieza y reinicio
-```bash
-# Reinicio suave (mantiene datos)
+# Reiniciar todo (mantiene datos)
 docker compose restart
 
-# Reinicio completo (elimina todo)
+# Reinicio limpio (borra todo)
 docker compose down -v && docker compose up -d
-
-# Limpiar cachés de Laravel
-docker compose exec laravel php artisan cache:clear
-docker compose exec laravel php artisan config:clear
 ```
 
-### ⚡ Verificación rápida
-```bash
-# Todo en uno: verificar que funciona
-docker compose ps && curl -s -o /dev/null -w "%{http_code}" http://localhost:8000
-# Debe mostrar contenedores "Up (healthy)" y código "200"
-```
+## 📚 Recursos Adicionales
 
-## 🔒 Notas de Seguridad
+- 📖 [Documentación Laravel](https://laravel.com/docs)
+- 🐳 [Docker Compose](https://docs.docker.com/compose/)
+- 🎨 [PlantUML](https://plantuml.com/) - Diagramas como código
+- 🌐 [GitHub Codespaces](https://github.com/features/codespaces)
 
-- ⚠️ **Nunca subir `.env`** al repositorio
-- 🔑 **Usar Codespaces Secrets** para credenciales sensibles
-- 🏠 **Solo desarrollo** - Este entorno es para desarrollo local y Codespaces
+## 🔒 Seguridad
 
-## 🔗 Enlaces Útiles
-
-- [Documentación Laravel](https://laravel.com/docs)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [GitHub Codespaces](https://github.com/features/codespaces)
+- ⚠️ Nunca subir archivos `.env` al repositorio
+- 🏠 Este entorno es solo para desarrollo
+- 🔑 Usar Codespaces Secrets para credenciales
 
 ---
 
-**¡Un solo comando, Laravel listo!** 🚀 `docker compose up -d`
+**🚀 Un comando, sistema completo:** `docker compose up -d`
