@@ -97,15 +97,54 @@ EventoPonente }o--|| Ponente : "ponente_id"
 Asistente }o--|| Evento : "evento_id\n(ELIMINACIÓN EN CASCADA)"
 
 ' ============================================================================
-' NOTAS E INFORMACIÓN ADICIONAL
+' CONTROLADORES Y ENDPOINTS API
 ' ============================================================================
 
-note top of Evento : <color:red><b>Entidad Gestión de Eventos</b></color>\n• Puede tener múltiples asistentes\n• Puede tener múltiples ponentes\n• Soporta descripciones largas (TEXTO)\n• Optimizado con índices de rendimiento\n• Validación de rango de fechas en controlador
+package "Controladores API" {
+    class EventoController {
+        + index() : GET /api/eventos
+        + store() : POST /api/eventos
+        + show($id) : GET /api/eventos/{id}
+        + update($id) : PUT /api/eventos/{id}
+        + destroy($id) : DELETE /api/eventos/{id}
+        --
+        <color:blue>Características:</color>
+        • Carga eager (asistentes, ponentes)
+        • Validación mejorada
+        • Validación de fechas (no eventos pasados)
+        • Respuestas de error detalladas
+    }
 
-note top of Ponente : <color:red><b>Entidad Ponente/Presentador</b></color>\n• Puede participar en múltiples eventos\n• Soporta biografías largas (TEXTO)\n• Varios-a-varios con eventos
+    class AsistenteController {
+        + index() : GET /api/asistentes
+        + store() : POST /api/asistentes
+        + show($id) : GET /api/asistentes/{id}
+        + update($id) : PUT /api/asistentes/{id}
+        + destroy($id) : DELETE /api/asistentes/{id}
+        --
+        <color:blue>Características:</color>
+        • Carga eager (evento)
+        • Validación de email
+        • Email único por evento
+        • Validación de existencia de clave foránea
+    }
 
-note top of Asistente : <color:red><b>Entidad Asistente al Evento</b></color>\n• Pertenece a un evento\n• El email debe ser único por evento\n• Se elimina en cascada cuando se elimina el evento
+    class PonenteController {
+        + index() : GET /api/ponentes
+        + store() : POST /api/ponentes
+        + show($id) : GET /api/ponentes/{id}
+        + update($id) : PUT /api/ponentes/{id}
+        + destroy($id) : DELETE /api/ponentes/{id}
+        --
+        <color:blue>Características:</color>
+        • Operaciones CRUD básicas
+        • Soporte de campo texto para biografía
+        • Listo para gestión de relaciones
+    }
+}
 
-note top of EventoPonente : <color:red><b>Tabla Pivote</b></color>\n• Relación varios-a-varios\n• Previene asignaciones duplicadas\n• Eliminaciones en cascada desde ambos lados\n• Incluye timestamps
+EventoController ..> Evento : "gestiona"
+AsistenteController ..> Asistente : "gestiona"
+PonenteController ..> Ponente : "gestiona"
 
 @enduml
