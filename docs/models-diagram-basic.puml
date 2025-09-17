@@ -22,14 +22,12 @@ ENTITY Evento {
     --
     created_at : timestamp
     updated_at : timestamp
-    --
-    <color:green>Índices:</color>
+    -- <color:green>Restricciones:</color> --
     • titulo_index
     • fecha_inicio_index  
     • fecha_fin_index
     • (fecha_inicio, fecha_fin)_compuesto
-    --
-    <color:blue>Relaciones:</color>
+    -- <color:blue>Relaciones:</color> --
     + asistentes() : tieneVarios
     + ponentes() : perteneceAVarios
 }
@@ -42,8 +40,7 @@ ENTITY Ponente {
     --
     created_at : timestamp
     updated_at : timestamp
-    --
-    <color:blue>Relaciones:</color>
+    -- <color:blue>Relaciones:</color> --
     + eventos() : perteneceAVarios
 }
 
@@ -56,13 +53,11 @@ ENTITY Asistente {
     --
     created_at : timestamp
     updated_at : timestamp
-    --
-    <color:green>Restricciones:</color>
+    -- <color:green>Restricciones:</color> --
     • ÚNICO (email, evento_id)
     • CF evento_id → eventos.id CASCADA
     • ÍNDICE evento_id
-    --
-    <color:blue>Relaciones:</color>
+    -- <color:blue>Relaciones:</color> --
     + evento() : perteneceA
 }
 
@@ -73,11 +68,10 @@ ENTITY EventoPonente <<Tabla Pivote>> {
     --
     created_at : timestamp
     updated_at : timestamp
-    --
-    <color:green>Restricciones:</color>
+    -- <color:green>Restricciones:</color> --
     • ÚNICO (evento_id, ponente_id)
-    • CF evento_id → eventos.id CASCADA
-    • CF ponente_id → ponentes.id CASCADA
+    • CLAVE FORÁNEA evento_id → eventos.id CASCADA
+    • CLAVE FORÁNEA ponente_id → ponentes.id CASCADA
     • ÍNDICE evento_id
     • ÍNDICE ponente_id
 }
@@ -94,7 +88,7 @@ Evento ||--o{ EventoPonente : "evento_id"
 EventoPonente }o--|| Ponente : "ponente_id"
 
 ' Líneas de Restricción de Clave Foránea
-Asistente }o--|| Evento : "evento_id\n(ELIMINACIÓN EN CASCADA)"
+Asistente }o--|| Evento : "evento_id\n(Eliminación en cascada)"
 
 ' ============================================================================
 ' CONTROLADORES Y ENDPOINTS API
@@ -107,12 +101,6 @@ package "Controladores API" {
         + show($id) : GET /api/eventos/{id}
         + update($id) : PUT /api/eventos/{id}
         + destroy($id) : DELETE /api/eventos/{id}
-        --
-        <color:blue>Características:</color>
-        • Carga eager (asistentes, ponentes)
-        • Validación mejorada
-        • Validación de fechas (no eventos pasados)
-        • Respuestas de error detalladas
     }
 
     class AsistenteController {
@@ -121,12 +109,6 @@ package "Controladores API" {
         + show($id) : GET /api/asistentes/{id}
         + update($id) : PUT /api/asistentes/{id}
         + destroy($id) : DELETE /api/asistentes/{id}
-        --
-        <color:blue>Características:</color>
-        • Carga eager (evento)
-        • Validación de email
-        • Email único por evento
-        • Validación de existencia de clave foránea
     }
 
     class PonenteController {
@@ -135,11 +117,6 @@ package "Controladores API" {
         + show($id) : GET /api/ponentes/{id}
         + update($id) : PUT /api/ponentes/{id}
         + destroy($id) : DELETE /api/ponentes/{id}
-        --
-        <color:blue>Características:</color>
-        • Operaciones CRUD básicas
-        • Soporte de campo texto para biografía
-        • Listo para gestión de relaciones
     }
 }
 
