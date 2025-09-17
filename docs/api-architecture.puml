@@ -7,7 +7,7 @@ skinparam {
 }
 
 title INFOTEC - Arquitectura API y Endpoints
-subtitle API RESTful Laravel 11 con Validación Mejorada
+
 ' ============================================================================
 ' CAPA CLIENTE
 ' ============================================================================
