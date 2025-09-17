@@ -1,6 +1,6 @@
 # 🚀 INFOTEC - Sistema de Eventos Laravel
 
-**Sistema automatizado de gestión de eventos desarrollado con Laravel 11 y MariaDB usando Docker Compose. Configuración completa lista para desarrollo con un solo comando.**
+**Sistema automatizado de gestión de eventos desarrollado con Laravel 11 y MariaDB usando Docker Compose.**
 
 ✅ **Estado**: Funcionando completamente - Laravel 11 + MariaDB + API REST en http://localhost:8000
 
@@ -8,16 +8,15 @@
 
 ### 🏗️ Diagrama de Base de Datos
 
-![Diagrama de Modelos INFOTEC](https://www.plantuml.com/plantuml/svg/ZP9DRjim48NtFeMNMrWfUhOXGrjqh39AXcjqwJccKaRZ8dNgQlQO7xywdyQeEoAK7sEURxTpNl_3nM6pYHKA0KrQdQ9LGhq3CqwdY1bfXmK5mYjBm9zOZoY9f6cZ_4Q9e5PgjgZZP4nCbEQHXIc8PjUbGX2oNK8nGM5a7nv9iIa49Jgr6qNE8N8fO9W9cJKQ9Gs5QOo)
+![Diagrama de Modelos INFOTEC](https://www.plantuml.com/plantuml/svg/pLRDRkCs4BxhAQP6WRNHA2aMs4kG6gjQp4Ae8xcsijW01G9QcdY9ogHAqkukaW3jfRTUYfvwQ-yzzH7o9liabMH6fBrnwXG6sW21GNxVS3ZV_50lbQPIB-O5HF5faf81d8aS2w5WI2LTOk5zakCLumWaJgFq0hA2AjLkZiRHMJ2-kFoANC39j7-IYKB8OubvlwMS9cCIlOetADDYWPPp7aTVdnC7dab4Rl4e3iaR1nQIyfbZdv8tAHYiNCYog31FCrrW6vQ_6HYy1wA-M-2SGexm9LLO_uPK2-Lvp-2BFVvvpnhrmY0a4pY2ioGamsIoRoUUoH1P8jS2hZq0M4iGo-4Ofcp6kEu-_xm7Yl7gVyP5pJGQLw8j2b7nbbHcRwdiFd_nejVWZSOvgaooCcE2LnoDxxHhV8MLoINZhC8hk5b-15S9MyCMKvPHS-17Jds_-SaaKetv9TMrLpP7fUcyN9cN-JR8zs6jdCOL9bbM-q9rV7BKOFrx7nz--CD4NqMGuxjsqudAG00EQ6BQCEgwLWUMrhlCnBnSeDB2tj5sn1WBkkL-dm5LJ6da6bMtrmIB75zJoOGoX59m2vSeAp9c61ZERLiXenNloIN2nNmgSMjnJ9cOINh5w5ffe2enOxHWESttcU8douTDN_oZE85HUP_ocFc6SygAXt2D1Lu9BXx0tFbfGhZSUet_ecVkVekZGGBT9hW3UyLUonYSEXV_yDClPgKEg-KWc0o2CB2d_Ho7qO1OWt-Pveqic_pQyNZV0YSdAPqM54PiAJJs-qzD-jFJungOXlr_9hIDvi3UqytgC7XDwcZkVen9i7E6D-pQeusXMJwXDbp47bObVF-F-9WCWq6Kn6J_R_SpEEV2f_vg71sRAgqbiGD9UMRtviRtnRK5u1Wwpclm3Uykk57f09RDdlDuz3grknNr8O-_clTXqv_JESPdcuYEjuxT2j-_kG67QZFJU1_U_ScHAiWHseAy-ulNwq51bmYdGjxzNb4y6wGvrDp9TLy5J0esPvokJa4E6LKPpMaLw_xBO934wJWP1c7LoHEu01A7eoIAqma4esZlbL7Ix5iwG-WC1DTI53GN4bNjgcE6LVD9RdGnf0Ab0LT3iVauQMRYAvB24ItPaMbHXwIqaDYGHibaE-kj-BxxASiVEkpeckMtbclcqZrxTFuuEwyhGRo_fuTaI5AonUBMiw7RHjWzUjiEZmjWYOzhu39tbS4QxAw4DTecXccwtQKe1Tz524lRBeFXxIw2eUyimHQJs-Pztso0myE-Corcg3GJd7RiIDdWjllhT5TGIpQxwrJl9V9yCI_-1W00)
 
-> **Diagrama en vivo**: [Ver diagrama completo en PlantUML](docs/models-diagram-basic.puml) 📁
+### 🎯 Funcionalidad 
 
-### 🎯 Funcionalidad Principal
 - **Gestión de Eventos**: Crear, editar y eliminar eventos con fechas y ubicaciones
 - **Registro de Ponentes**: Administrar ponentes con biografías y especialidades
 - **Control de Asistentes**: Registro único por evento con validación de email
 - **API REST**: Endpoints completos para todas las entidades
-- **Base de datos**: MariaDB con relaciones optimizadas y restricciones de integridad
+- **Base de datos**: MariaDB con relaciones y restricciones de integridad
 
 ## ✨ Configuración Automática
 
@@ -31,9 +30,9 @@
 ## ⚡ Inicio Rápido
 
 ### Requisitos
-- Docker Desktop instalado
+- Docker Desktop instalado en local o uso de GitHub Codespaces
 
-### Iniciar el Sistema
+### Iniciar el Sistema en local
 
 ```bash
 # 1. Configurar entorno
