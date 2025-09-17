@@ -1,0 +1,118 @@
+@startuml INFOTEC Relaciones de Entidades
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BackgroundColor<<Entity>> #E1F5FE
+    BackgroundColor<<Pivot>> #FFF3E0
+    BorderColor #1976D2
+    ArrowColor #1976D2
+}
+
+title INFOTEC - Diagrama de Relación de Entidades
+
+' ============================================================================
+' ENTIDADES
+' ============================================================================
+
+class Evento <<Entidad>> {
+    + id: bigint CP
+    --
+    + titulo: varchar(255) 🔍
+    + descripcion: text 📝
+    + fecha_inicio: date 🔍
+    + fecha_fin: date 🔍
+    + ubicacion: varchar(255)
+    --
+    + created_at: timestamp
+    + updated_at: timestamp
+    ==
+    <color:blue>**Relaciones**</color>
+    + asistentes(): tieneVarios
+    + ponentes(): perteneceAVarios
+}
+
+class Ponente <<Entidad>> {
+    + id: bigint CP
+    --
+    + nombre: varchar(255)
+    + biografia: text 📝
+    + especialidad: varchar(255)
+    --
+    + created_at: timestamp
+    + updated_at: timestamp
+    ==
+    <color:blue>**Relaciones**</color>
+    + eventos(): perteneceAVarios
+}
+
+class Asistente <<Entidad>> {
+    + id: bigint CP
+    --
+    + nombre: varchar(255)
+    + email: varchar(255) ✉️
+    + telefono: varchar(255)
+    + evento_id: bigint CF
+    --
+    + created_at: timestamp
+    + updated_at: timestamp
+    ==
+    <color:blue>**Relaciones**</color>
+    + evento(): pertenece A
+}
+
+class EventoPonente <<Tabla Pivote>> {
+    + id: bigint CP
+    --
+    + evento_id: bigint CF
+    + ponente_id: bigint CF
+    --
+    + created_at: timestamp
+    + updated_at: timestamp
+}
+
+' ============================================================================
+' RELACIONES
+' ============================================================================
+
+Evento ||--o{ Asistente : "1:N\n(tieneVarios/perteneceA)"
+Evento ||--o{ EventoPonente : ""
+EventoPonente }o--|| Ponente : ""
+
+' ============================================================================
+' ANOTACIONES DE RELACIONES
+' ============================================================================
+
+note on link : <color:green>**ELIMINACIÓN EN CASCADA**</color>\nCuando se elimina un evento,\ntodos los asistentes se eliminan
+
+note on link : <color:purple>**VARIOS-A-VARIOS**</color>\nLos ponentes pueden participar\nen múltiples eventos
+
+' ============================================================================
+' NOTAS DE RESTRICCIONES
+' ============================================================================
+
+note top of Evento : 🎯 **Entidad Evento**\n• Índices de rendimiento en campos buscables\n• Campo TEXTO para descripciones largas\n• Validación de fechas (no eventos pasados)
+
+note top of Ponente : 👨‍🏫 **Entidad Ponente**\n• Puede participar en múltiples eventos\n• Soporta biografías largas
+
+note right of Asistente : 🎫 **Entidad Asistente**\n• Email único por evento\n• ELIMINACIÓN EN CASCADA con evento
+
+note bottom of EventoPonente : 🔗 **Tabla Pivote**\n• Único (evento_id, ponente_id)\n• ELIMINACIÓN EN CASCADA desde ambos lados
+
+' ============================================================================
+' LEYENDA
+' ============================================================================
+
+legend bottom left
+    <color:blue>**Leyenda de Símbolos**</color>
+    🔍 = Campo indexado
+    📝 = Campo TEXTO (contenido largo)
+    ✉️ = Campo email (validado)
+    CP = Clave Primaria
+    CF = Clave Foránea
+    
+    <color:green>**Tipos de Relaciones**</color>
+    1:N = Uno-a-Varios
+    M:N = Varios-a-Varios (vía pivote)
+endlegend
+
+@enduml

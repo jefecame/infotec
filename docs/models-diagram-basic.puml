@@ -1,0 +1,127 @@
+@startuml INFOTEC Modelos Laravel
+!define ENTITY class
+!define PRIMARY_KEY <b><color:red>
+!define FOREIGN_KEY <b><color:blue>
+!define UNIQUE <b><color:green>
+!define INDEX <b><color:orange>
+!define TEXT <color:purple>
+
+title INFOTEC - Modelos Laravel y Esquema de Base de Datos
+
+' ============================================================================
+' ENTIDADES / MODELOS
+' ============================================================================
+
+ENTITY Evento {
+    PRIMARY_KEY id : bigint(20) sin signo
+    INDEX titulo : varchar(255)
+    TEXT descripcion : texto
+    INDEX fecha_inicio : fecha
+    INDEX fecha_fin : fecha
+    ubicacion : varchar(255)
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    -- <color:green>Restricciones:</color> --
+    • titulo_index
+    • fecha_inicio_index  
+    • fecha_fin_index
+    • (fecha_inicio, fecha_fin)_compuesto
+    -- <color:blue>Relaciones:</color> --
+    + asistentes() : tieneVarios
+    + ponentes() : perteneceAVarios
+}
+
+ENTITY Ponente {
+    PRIMARY_KEY id : bigint(20) sin signo
+    nombre : varchar(255)
+    TEXT biografia : texto
+    especialidad : varchar(255)
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    -- <color:blue>Relaciones:</color> --
+    + eventos() : perteneceAVarios
+}
+
+ENTITY Asistente {
+    PRIMARY_KEY id : bigint(20) sin signo
+    nombre : varchar(255)
+    UNIQUE email : varchar(255)
+    telefono : varchar(255)
+    FOREIGN_KEY evento_id : bigint(20) sin signo
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    -- <color:green>Restricciones:</color> --
+    • ÚNICO (email, evento_id)
+    • CF evento_id → eventos.id CASCADA
+    • ÍNDICE evento_id
+    -- <color:blue>Relaciones:</color> --
+    + evento() : perteneceA
+}
+
+ENTITY EventoPonente <<Tabla Pivote>> {
+    PRIMARY_KEY id : bigint(20) sin signo
+    FOREIGN_KEY evento_id : bigint(20) sin signo
+    FOREIGN_KEY ponente_id : bigint(20) sin signo
+    --
+    created_at : timestamp
+    updated_at : timestamp
+    -- <color:green>Restricciones:</color> --
+    • ÚNICO (evento_id, ponente_id)
+    • CLAVE FORÁNEA evento_id → eventos.id CASCADA
+    • CLAVE FORÁNEA ponente_id → ponentes.id CASCADA
+    • ÍNDICE evento_id
+    • ÍNDICE ponente_id
+}
+
+' ============================================================================
+' RELACIONES
+' ============================================================================
+
+' Uno-a-Varios: Evento → Asistentes
+Evento ||--o{ Asistente : "tieneVarios\n(un evento, varios asistentes)"
+
+' Varios-a-Varios: Evento ↔ Ponentes
+Evento ||--o{ EventoPonente : "evento_id"
+EventoPonente }o--|| Ponente : "ponente_id"
+
+' Líneas de Restricción de Clave Foránea
+Asistente }o--|| Evento : "evento_id\n(Eliminación en cascada)"
+
+' ============================================================================
+' CONTROLADORES Y ENDPOINTS API
+' ============================================================================
+
+package "Controladores API" {
+    class EventoController {
+        + index() : GET /api/eventos
+        + store() : POST /api/eventos
+        + show($id) : GET /api/eventos/{id}
+        + update($id) : PUT /api/eventos/{id}
+        + destroy($id) : DELETE /api/eventos/{id}
+    }
+
+    class AsistenteController {
+        + index() : GET /api/asistentes
+        + store() : POST /api/asistentes
+        + show($id) : GET /api/asistentes/{id}
+        + update($id) : PUT /api/asistentes/{id}
+        + destroy($id) : DELETE /api/asistentes/{id}
+    }
+
+    class PonenteController {
+        + index() : GET /api/ponentes
+        + store() : POST /api/ponentes
+        + show($id) : GET /api/ponentes/{id}
+        + update($id) : PUT /api/ponentes/{id}
+        + destroy($id) : DELETE /api/ponentes/{id}
+    }
+}
+
+EventoController ..> Evento : "gestiona"
+AsistenteController ..> Asistente : "gestiona"
+PonenteController ..> Ponente : "gestiona"
+
+@enduml

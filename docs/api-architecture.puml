@@ -1,0 +1,228 @@
+@startuml INFOTEC Arquitectura API
+!theme plain
+skinparam {
+    backgroundColor #FAFAFA
+    componentStyle rectangle
+    packageStyle rectangle
+}
+
+title INFOTEC - Arquitectura API y Endpoints
+
+' ============================================================================
+' CAPA CLIENTE
+' ============================================================================
+
+package "Aplicaciones Cliente" as ClientLayer #E8F5E8 {
+    component "Frontend Web" as WebApp
+    component "App Móvil" as MobileApp
+    component "API Terceros" as ThirdParty
+}
+
+' ============================================================================
+' CAPA API
+' ============================================================================
+
+package "API Laravel 11" as APILayer #E3F2FD {
+    
+    ' Capa de Rutas
+    package "Rutas (api.php)" as RouteLayer #F3E5F5 {
+        component "GET /api/eventos" as GetEventos
+        component "POST /api/eventos" as PostEventos
+        component "GET /api/eventos/{id}" as GetEvento
+        component "PUT /api/eventos/{id}" as PutEvento
+        component "DELETE /api/eventos/{id}" as DeleteEvento
+        
+        component "GET /api/ponentes" as GetPonentes
+        component "POST /api/ponentes" as PostPonentes
+        component "GET /api/ponentes/{id}" as GetPonente
+        component "PUT /api/ponentes/{id}" as PutPonente
+        component "DELETE /api/ponentes/{id}" as DeletePonente
+        
+        component "GET /api/asistentes" as GetAsistentes
+        component "POST /api/asistentes" as PostAsistentes
+        component "GET /api/asistentes/{id}" as GetAsistente
+        component "PUT /api/asistentes/{id}" as PutAsistente
+        component "DELETE /api/asistentes/{id}" as DeleteAsistente
+    }
+    
+    ' Capa de Controladores
+    package "Controladores" as ControllerLayer #FFF3E0 {
+        
+        class EventoController {
+            + index() : JsonResponse
+            + store(Request) : JsonResponse
+            + show(id) : JsonResponse
+            + update(Request, id) : JsonResponse
+            + destroy(id) : JsonResponse
+            --
+            <color:blue>**Características**</color>
+            • Carga eager (asistentes, ponentes)
+            • Validación mejorada
+            • Validación de fechas (no eventos pasados)
+            • Respuestas de error detalladas
+            --
+            <color:green>**Reglas de Validación**</color>
+            • titulo: required|string|max:255
+            • descripcion: required|string|max:10000
+            • fecha_inicio: required|date|after_or_equal:today
+            • fecha_fin: required|date|after_or_equal:fecha_inicio
+            • ubicacion: required|string|max:255
+        }
+        
+        class AsistenteController {
+            + index() : JsonResponse
+            + store(Request) : JsonResponse
+            + show(id) : JsonResponse
+            + update(Request, id) : JsonResponse
+            + destroy(id) : JsonResponse
+            --
+            <color:blue>**Características**</color>
+            • Carga eager (evento)
+            • Validación de email
+            • Email único por evento
+            • Validación de existencia de clave foránea
+            --
+            <color:green>**Reglas de Validación**</color>
+            • nombre: requerido|string|max:255
+            • email: requerido|email|único por evento
+            • telefono: requerido|string|max:20
+            • evento_id: requerido|integer|exists:eventos,id
+        }
+        
+        class PonenteController {
+            + index() : JsonResponse
+            + store(Request) : JsonResponse
+            + show(id) : JsonResponse
+            + update(Request, id) : JsonResponse
+            + destroy(id) : JsonResponse
+            --
+            <color:blue>**Características**</color>
+            • Operaciones CRUD básicas
+            • Soporte de campo texto para biografía
+            • Listo para gestión de relaciones
+            --
+            <color:green>**Reglas de Validación**</color>
+            • nombre: requerido|string|max:255
+            • biografia: requerido|text
+            • especialidad: requerido|string|max:255
+        }
+    }
+}
+
+' ============================================================================
+' CAPA MODELOS
+' ============================================================================
+
+package "Modelos Eloquent" as ModelLayer #E8F5E8 {
+    class Evento {
+        + fillable: [titulo, descripcion, fecha_inicio, fecha_fin, ubicacion]
+        + asistentes(): hasMany
+        + ponentes(): belongsToMany
+    }
+    
+    class Asistente {
+        + fillable: [nombre, email, telefono, evento_id]
+        + evento(): belongsTo
+    }
+    
+    class Ponente {
+        + fillable: [nombre, biografia, especialidad]
+        + eventos(): belongsToMany
+    }
+}
+
+' ============================================================================
+' CAPA BASE DE DATOS
+' ============================================================================
+
+package "Base de Datos MariaDB" as DatabaseLayer #FFEBEE {
+    database "eventos" as EventosTable {
+        - id (CP)
+        - titulo (indexado)
+        - descripcion (texto)
+        - fecha_inicio (indexado)
+        - fecha_fin (indexado)
+        - ubicacion
+        - timestamps
+    }
+    
+    database "asistentes" as AsistentesTable {
+        - id (CP)
+        - nombre
+        - email (único por evento)
+        - telefono
+        - evento_id (CF, indexado)
+        - timestamps
+    }
+    
+    database "ponentes" as PonentesTable {
+        - id (CP)
+        - nombre
+        - biografia (texto)
+        - especialidad
+        - timestamps
+    }
+    
+    database "evento_ponente" as PivotTable {
+        - id (CP)
+        - evento_id (CF, indexado)
+        - ponente_id (CF, indexado)
+        - único(evento_id, ponente_id)
+        - timestamps
+    }
+}
+
+' ============================================================================
+' CONEXIONES
+' ============================================================================
+
+' Cliente a API
+ClientLayer --> RouteLayer : "Peticiones HTTP\n(JSON)"
+
+' Rutas a Controladores
+GetEventos --> EventoController : "index()"
+PostEventos --> EventoController : "store()"
+GetEvento --> EventoController : "show()"
+PutEvento --> EventoController : "update()"
+DeleteEvento --> EventoController : "destroy()"
+
+GetAsistentes --> AsistenteController : "index()"
+PostAsistentes --> AsistenteController : "store()"
+GetAsistente --> AsistenteController : "show()"
+PutAsistente --> AsistenteController : "update()"
+DeleteAsistente --> AsistenteController : "destroy()"
+
+GetPonentes --> PonenteController : "index()"
+PostPonentes --> PonenteController : "store()"
+GetPonente --> PonenteController : "show()"
+PutPonente --> PonenteController : "update()"
+DeletePonente --> PonenteController : "destroy()"
+
+' Controladores a Modelos
+EventoController --> Evento : "usa"
+AsistenteController --> Asistente : "usa"
+PonenteController --> Ponente : "usa"
+
+' Modelos a Base de Datos
+Evento --> EventosTable : "consultas"
+Asistente --> AsistentesTable : "consultas"
+Ponente --> PonentesTable : "consultas"
+
+' Relaciones de Base de Datos
+EventosTable ||--o{ AsistentesTable : "1:N"
+EventosTable ||--o{ PivotTable : "1:N"
+PonentesTable ||--o{ PivotTable : "1:N"
+
+' ============================================================================
+' FORMATOS DE RESPUESTA
+' ============================================================================
+
+note bottom of APILayer : <color:blue>**Formatos de Respuesta Estándar**</color>\n\n**Respuesta Éxito:**\n{\n  "eventos": [...],\n  "status": 200\n}\n\n**Respuesta Error:**\n{\n  "message": "Error de validación",\n  "errors": {...errores de validación...},\n  "status": 400\n}\n\n**Características:**\n• Respuestas JSON\n• Códigos de estado HTTP\n• Errores de validación detallados\n• Relaciones cargadas con eager loading
+
+' ============================================================================
+' MIDDLEWARE Y CARACTERÍSTICAS
+' ============================================================================
+
+note top of APILayer : <color:green>**Características de la API**</color>\n• Endpoints RESTful\n• Petición/respuesta JSON\n• ORM Eloquent\n• Validación mejorada\n• Carga eager loading\n• Validación de claves foráneas\n• Restricciones de unicidad\n• Mensajes de error detallados\n• Mejores prácticas Laravel 11
+
+@enduml

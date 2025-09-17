@@ -1,0 +1,5 @@
+{
+  "nombre": "Ing. Alejandro Torres Mendoza",
+  "biografia": "Ingeniero en Sistemas con especialización en DevOps y Site Reliability Engineering (SRE). Cuenta con más de 14 años de experiencia en la implementación de prácticas DevOps en empresas de todos los tamaños, desde startups hasta Fortune 500. Ha trabajado como Senior DevOps Engineer en Amazon Web Services, donde lideró la implementación de pipelines CI/CD para más de 200 servicios. Actualmente es Head of Platform Engineering en Mercado Libre, donde gestiona la infraestructura que soporta millones de transacciones diarias. Es certificado Kubernetes Administrator (CKA), AWS Solutions Architect Professional y tiene certificaciones avanzadas en Docker, Terraform, Ansible y Jenkins. Ha sido speaker en KubeCon, DockerCon y AWS re:Invent. Es autor del libro 'Kubernetes en Producción: Guía Práctica' y mantiene varios proyectos open source relacionados con automatización de infraestructura.",
+  "especialidad": "DevOps, Kubernetes, Site Reliability Engineering y Cloud Infrastructure"
+}

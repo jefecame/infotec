@@ -1,0 +1,7 @@
+{
+  "titulo": "Bootcamp Intensivo de DevOps y Kubernetes",
+  "descripcion": "Bootcamp intensivo de 3 días sobre DevOps, containerización y orquestación con Kubernetes. Los participantes aprenderán sobre CI/CD pipelines, Docker, Kubernetes, Helm, monitoring con Prometheus y Grafana, y las mejores prácticas para deployment en producción. Incluye laboratorios hands-on con clusters reales de Kubernetes, implementación de microservicios y automatización completa del ciclo de desarrollo. Dirigido a desarrolladores, administradores de sistemas y arquitectos de software que buscan dominar las tecnologías DevOps modernas.",
+  "fecha_inicio": "2025-12-08",
+  "fecha_fin": "2025-12-10",
+  "ubicacion": "Laboratorio de DevOps INFOTEC, Edificio B - Piso 3"
+}
