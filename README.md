@@ -67,13 +67,14 @@ infotec/
 ## 🔧 Comandos Útiles
 
 ### Desarrollo
+
 ```bash
 # Acceder al contenedor
 docker compose exec laravel bash
 
 # Comandos Artisan frecuentes
 docker compose exec laravel php artisan migrate
-docker compose exec laravel php artisan make:model Evento
+docker compose exec laravel php artisan make:model Evento -mcr --api
 docker compose exec laravel php artisan make:controller Api/EventoController
 
 # Instalar dependencias
@@ -81,6 +82,7 @@ docker compose exec laravel composer install
 ```
 
 ### Monitoreo
+
 ```bash
 # Ver logs
 docker compose logs -f laravel
@@ -91,9 +93,13 @@ docker compose ps
 ```
 
 ### Control
+
 ```bash
+# Iniciar
+docker compose up -d
+
 # Detener
-docker compose down
+docker compose -v
 
 # Reiniciar completo
 docker compose down -v && docker compose up -d
@@ -114,6 +120,7 @@ docker compose down -v && docker compose up -d
 | POST | `/api/asistentes` | Registrar asistente |
 
 ### Ejemplo de uso:
+
 ```bash
 # Crear evento
 curl -X POST http://localhost:8000/api/eventos \
@@ -128,51 +135,57 @@ curl http://localhost:8000/api/eventos
 
 ```bash
 # Base de datos
-MARIADB_DATABASE=infotec_laravel
-MARIADB_USER=usuario_laravel
-MARIADB_PASSWORD=mi_password_seguro_123
+MARIADB_DATABASE
+MARIADB_PASSWORD
+MARIADB_ROOT_PASSWORD
+MARIADB_USER
 
 # Laravel
-DB_CONNECTION=mysql
-DB_HOST=mariadb
-DB_PORT=3306
+DB_CONNECTION
+DB_HOST
+DB_PASSWOR
+DB_PORT
+DB_USERNAME
+
+# Otras
+COMPOSE_PROJECT_NAME
+LARAVEL_VERSION
 ```
 
 ## 🌐 GitHub Codespaces
 
 **Uso en Codespaces:**
-1. Abre el repositorio en Codespaces
+
+1. Abre el repositorio en Codespaces (se configura automáticamente con devcontainer.json)
 2. Ejecuta: `docker compose up -d`
 3. Codespaces detectará automáticamente el puerto 8000
 
 ### Secrets (Opcional)
-En `Settings → Secrets and variables → Codespaces`:
-```
-MARIADB_PASSWORD = tu_password_seguro
-MARIADB_ROOT_PASSWORD = tu_root_password
-```
+
+En `Settings → Secrets and variables → Codespaces`: Variables de entorno.
 
 ## 🐳 Servicios Docker
 
-| Servicio | Descripción | Puerto | Estado |
-|----------|-------------|--------|--------|
-| **laravel** | API Laravel + PHP 8.3 | 8000 | 🟢 Activo |
+| Servicio    | Descripción | Puerto       | Estado            |
+|-------------|-------------|--------------|----- -------------|
+| **laravel** | API Laravel + PHP 8.3      | 8000 | 🟢 Activo |
 | **mariadb** | Base de datos MariaDB 11.4 | 3306 | 🟢 Activo |
 
 ## 🔄 Proceso de Inicialización
 
-Al ejecutar `docker compose up`, el sistema:
+Al ejecutar `docker compose -d`, el sistema:
 
 1. ✅ Inicia **MariaDB** con verificación de salud
 2. ✅ **Crea Laravel 11** si es necesario
-3. ✅ **Instala dependencias** automáticamente
-4. ✅ **Configura entorno** (.env con credenciales DB)
+3. ✅ **Isntala dependencias** automáticamente
+4. ✅ **Configura entorno** (.env con credenciales DB o secrets de Codespaces)
 5. ✅ **Ejecuta migraciones** de base de datos
 6. ✅ **Inicia servidor** en puerto 8000
 
 ## 🛠️ Solución de Problemas
 
-### Verificación Rápida
+### Verificación 
+
 ```bash
 # Estado de servicios
 docker compose ps
@@ -185,6 +198,7 @@ docker compose logs -f laravel
 ```
 
 ### Reinicio Completo
+
 ```bash
 # Reiniciar todo (mantiene datos)
 docker compose restart
