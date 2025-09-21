@@ -58,7 +58,10 @@ infotec/
 │   ├── routes/api.php     # Rutas API (/api/eventos, /api/ponentes)
 │   └── artisan            # CLI de Laravel
 ├── 📁 docs/               # Documentación y diagramas
-│   └── models-diagram-basic.puml  # Diagrama PlantUML
+│   ├── models-diagram-basic.puml  # Diagrama PlantUML
+│   └── SCRIPTS.md         # Documentación de scripts
+├── 📁 scripts/            # Scripts de utilidades
+│   └── laravel-startup.sh         # Script de inicio del contenedor
 ├── 📁 database/           # Scripts SQL y datos de prueba
 ├── 🐳 docker-compose.yml  # Orquestación de servicios
 └── 📄 README.md           # Esta documentación
@@ -184,8 +187,19 @@ Al ejecutar `docker compose -d`, el sistema:
 
 ## 🛠️ Solución de Problemas
 
-### Verificación 
+### ⚠️ Error "Please provide a valid cache path" (Codespaces)
 
+**Síntoma**: Error al acceder a `localhost:8000` en nuevo Codespace
+
+**Solución**: El script `laravel-startup.sh` **ya incluye** la corrección automática. Simplemente ejecuta:
+
+```bash
+docker compose up -d
+```
+
+> ✨ **Nota**: La corrección de storage se aplica automáticamente durante el inicio
+
+### Verificación General
 ```bash
 # Estado de servicios
 docker compose ps
@@ -195,6 +209,7 @@ curl http://localhost:8000/api/eventos
 
 # Ver logs si hay problemas
 docker compose logs -f laravel
+```
 ```
 
 ### Reinicio Completo
@@ -213,6 +228,7 @@ docker compose down -v && docker compose up -d
 - 🐳 [Docker Compose](https://docs.docker.com/compose/)
 - 🎨 [PlantUML](https://plantuml.com/) - Diagramas como código
 - 🌐 [GitHub Codespaces](https://github.com/features/codespaces)
+- 📜 [Documentación de Scripts](docs/SCRIPTS.md) - Guía del script de inicio
 
 ## 🔒 Seguridad
 

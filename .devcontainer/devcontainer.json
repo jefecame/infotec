@@ -12,7 +12,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "bmewburn.vscode-intelephense-client",
         "felixfbecker.php-debug",
         "ms-vscode.vscode-docker"
       ]
