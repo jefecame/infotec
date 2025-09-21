@@ -8,7 +8,7 @@ COPY /src/scripts/laravel-startup.sh /app/scripts/laravel-startup.sh
 RUN chmod +x /app/scripts/laravel-startup.sh
 
 # Puedes instalar dependencias adicionales aquí si lo necesitas
-# RUN apt-get update && apt-get install -y <paquete>
+RUN apt-get update && apt-get install -y unzip
 
 # Comando de inicio
 CMD ["/bin/bash", "/app/scripts/laravel-startup.sh"]

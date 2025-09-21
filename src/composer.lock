@@ -1400,16 +1400,16 @@
         },
         {
             "name": "laravel/passport",
-            "version": "v13.2.0",
+            "version": "v13.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/passport.git",
-                "reference": "0356d18201f6dd9b3f47dc086d85d4656582a1af"
+                "reference": "8152e794698e0ddbf87f56f2bd428c4fc20e2dde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/passport/zipball/0356d18201f6dd9b3f47dc086d85d4656582a1af",
-                "reference": "0356d18201f6dd9b3f47dc086d85d4656582a1af",
+                "url": "https://api.github.com/repos/laravel/passport/zipball/8152e794698e0ddbf87f56f2bd428c4fc20e2dde",
+                "reference": "8152e794698e0ddbf87f56f2bd428c4fc20e2dde",
                 "shasum": ""
             },
             "require": {
@@ -1473,7 +1473,7 @@
                 "issues": "https://github.com/laravel/passport/issues",
                 "source": "https://github.com/laravel/passport"
             },
-            "time": "2025-08-19T13:34:50+00:00"
+            "time": "2025-09-15T20:48:33+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -3916,16 +3916,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.12.10",
+            "version": "v0.12.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "6e80abe6f2257121f1eb9a4c55bf29d921025b22"
+                "reference": "cd23863404a40ccfaf733e3af4db2b459837f7e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/6e80abe6f2257121f1eb9a4c55bf29d921025b22",
-                "reference": "6e80abe6f2257121f1eb9a4c55bf29d921025b22",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/cd23863404a40ccfaf733e3af4db2b459837f7e7",
+                "reference": "cd23863404a40ccfaf733e3af4db2b459837f7e7",
                 "shasum": ""
             },
             "require": {
@@ -3988,9 +3988,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
-                "source": "https://github.com/bobthecow/psysh/tree/v0.12.10"
+                "source": "https://github.com/bobthecow/psysh/tree/v0.12.12"
             },
-            "time": "2025-08-04T12:39:37+00:00"
+            "time": "2025-09-20T13:46:31+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
