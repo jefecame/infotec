@@ -184,6 +184,17 @@ else
 fi
 
 # =============================================================================
+# RUN SEEDERS AUTOMATICAMENTE
+# =============================================================================
+
+echo "🌱 Ejecutando seeder inicial..."
+if php artisan db:seed --class=InitialSeeder --force 2>/dev/null; then
+    echo "✅ Seeder inicial ejecutado exitosamente"
+else
+    echo "⚠️ Error al ejecutar el seeder inicial"
+fi
+
+# =============================================================================
 # FINAL SETUP AND HEALTH CHECK
 # =============================================================================
 
