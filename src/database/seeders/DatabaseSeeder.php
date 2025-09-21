@@ -26,6 +26,6 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // Ejecutar SQL seed idempotente y el seeder de prueba
-        $this->call([SqlSeedSeeder::class, TestDataSeeder::class]);
+        $this->call([InitialSeeder::class]);
     }
 }
