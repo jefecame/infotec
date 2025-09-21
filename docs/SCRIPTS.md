@@ -6,10 +6,7 @@ Este documento describe los scripts disponibles en el proyecto INFOTEC y su prop
 
 ```
 scripts/
-├── laravel-startup.sh         # Script principal de inicio del contenedor
-├── fix-codespace-storage.sh   # Fix rápido para problemas de storage en Codespaces
-├── fix-storage-permissions.sh # Fix completo de permisos con verificación
-└── Fix-StoragePermissions.ps1  # Fix para Windows PowerShell
+└── laravel-startup.sh         # Script principal de inicio del contenedor
 ```
 
 ## 🚀 Script Principal: `laravel-startup.sh`
@@ -85,51 +82,21 @@ Cada paso muestra:
 🚀 Iniciando servidor de desarrollo...
 ```
 
-## 🔧 Scripts de Fix para Storage
+## 🔧 Fix de Storage Integrado
 
-### `fix-codespace-storage.sh` (Codespaces)
+**El script `laravel-startup.sh` incluye automáticamente todas las correcciones de storage:**
 
-**Uso rápido para problemas de cache en Codespaces:**
+✨ **Características integradas:**
+- ✅ **Creación automática** de directorios de storage
+- ✅ **Permisos correctos** (775 para directorios, 664 para archivos) 
+- ✅ **Archivos .gitignore** para preservar estructura
+- ✅ **Limpieza de cache** para prevenir problemas
+- ✅ **Verificación final** de directorios y permisos
 
+**No se requieren scripts adicionales** - todo funciona con:
 ```bash
-chmod +x scripts/fix-codespace-storage.sh
-./scripts/fix-codespace-storage.sh
+docker compose up -d
 ```
-
-**Funciones:**
-- Crea directorios de storage requeridos
-- Establece permisos 775 con `sudo`
-- Verifica escritura en directorios críticos
-- Ajusta ownership si es necesario
-
-### `fix-storage-permissions.sh` (Linux/Mac)
-
-**Fix completo con verificación:**
-
-```bash
-./scripts/fix-storage-permissions.sh
-```
-
-**Funciones:**
-- Creación completa de estructura de storage
-- Configuración de permisos granular (775 dirs, 664 archivos)
-- Verificación exhaustiva de estructura
-- Pruebas de escritura
-- Limpieza de cache Laravel
-
-### `Fix-StoragePermissions.ps1` (Windows)
-
-**Para desarrollo local en Windows:**
-
-```powershell
-.\scripts\Fix-StoragePermissions.ps1
-```
-
-**Funciones:**
-- Adaptado para PowerShell en Windows
-- Manejo de rutas Windows
-- Verificaciones de permisos específicas para Windows
-- Output colorizado para mejor UX
 
 ## ⚡ Ventajas de la Organización por Scripts
 

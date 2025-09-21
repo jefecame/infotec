@@ -61,10 +61,7 @@ infotec/
 │   ├── models-diagram-basic.puml  # Diagrama PlantUML
 │   └── STORAGE-FIX.md     # Guía para fix de storage
 ├── 📁 scripts/            # Scripts de utilidades
-│   ├── laravel-startup.sh         # Script de inicio del contenedor
-│   ├── fix-codespace-storage.sh   # Fix rápido Codespaces
-│   ├── fix-storage-permissions.sh # Fix completo Linux
-│   └── Fix-StoragePermissions.ps1 # Fix para Windows
+│   └── laravel-startup.sh         # Script de inicio del contenedor
 ├── 📁 database/           # Scripts SQL y datos de prueba
 ├── 🐳 docker-compose.yml  # Orquestación de servicios
 └── 📄 README.md           # Esta documentación
@@ -194,17 +191,13 @@ Al ejecutar `docker compose -d`, el sistema:
 
 **Síntoma**: Error al acceder a `localhost:8000` en nuevo Codespace
 
-**Solución rápida**:
-```bash
-# Fix automático para Codespaces
-chmod +x scripts/fix-codespace-storage.sh
-./scripts/fix-codespace-storage.sh
+**Solución**: El script `laravel-startup.sh` **ya incluye** la corrección automática. Simplemente ejecuta:
 
-# Luego iniciar servicios
+```bash
 docker compose up -d
 ```
 
-> 📖 **Documentación completa**: [docs/STORAGE-FIX.md](docs/STORAGE-FIX.md)
+> ✨ **Nota**: La corrección de storage se aplica automáticamente durante el inicio
 
 ### Verificación General
 ```bash
@@ -235,8 +228,7 @@ docker compose down -v && docker compose up -d
 - 🐳 [Docker Compose](https://docs.docker.com/compose/)
 - 🎨 [PlantUML](https://plantuml.com/) - Diagramas como código
 - 🌐 [GitHub Codespaces](https://github.com/features/codespaces)
-- 📜 [Documentación de Scripts](docs/SCRIPTS.md) - Guía completa de scripts
-- 🔧 [Fix de Storage](docs/STORAGE-FIX.md) - Solución para problemas de cache
+- 📜 [Documentación de Scripts](docs/SCRIPTS.md) - Guía del script de inicio
 
 ## 🔒 Seguridad
 
