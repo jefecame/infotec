@@ -2,7 +2,7 @@
 FROM bitnami/laravel:11
 
 # Copia el script de inicio personalizado
-COPY ./scripts/laravel-startup.sh /app/scripts/laravel-startup.sh
+COPY /src/scripts/laravel-startup.sh /app/scripts/laravel-startup.sh
 
 # Da permisos de ejecución al script
 RUN chmod +x /app/scripts/laravel-startup.sh
