@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-// Agregar el controlador EventoController
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\PonenteController;
 use App\Http\Controllers\AsistenteController;
