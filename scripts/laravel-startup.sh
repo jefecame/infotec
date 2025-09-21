@@ -18,7 +18,8 @@ echo "🚀 INFOTEC - Configuración automática de Laravel"
 
 echo "⏳ Esperando MariaDB..."
 for i in {1..30}; do
-    if nc -z mariadb 3306 2>/dev/null; then
+    # Preferimos /dev/tcp porque la imagen puede no tener 'nc'
+    if bash -c ">/dev/tcp/mariadb/3306" >/dev/null 2>&1; then
         echo "✅ MariaDB disponible en puerto 3306"
         break
     fi
@@ -88,12 +89,24 @@ fi
 
 # Configure database using environment variables
 echo "🗄️ Configurando conexión de base de datos..."
-sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=$DB_CONNECTION/" .env
-sed -i "s/DB_HOST=.*/DB_HOST=$DB_HOST/" .env
-sed -i "s/DB_PORT=.*/DB_PORT=$DB_PORT/" .env
-sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_DATABASE/" .env
-sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USERNAME/" .env
-sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" .env
+
+# Helper: replace a key even if it's commented or add it if missing
+replace_or_add_env() {
+    local key="$1" value="$2"
+    # If a line for the key exists (commented or not), replace it. Allow leading spaces and optional '#'
+    if grep -q -E "^[[:space:]]*#?[[:space:]]*${key}=" .env; then
+        sed -i -E "s/^[[:space:]]*#?[[:space:]]*(${key})=.*/\1=${value}/" .env
+    else
+        echo "${key}=${value}" >> .env
+    fi
+}
+
+replace_or_add_env "DB_CONNECTION" "$DB_CONNECTION"
+replace_or_add_env "DB_HOST" "$DB_HOST"
+replace_or_add_env "DB_PORT" "$DB_PORT"
+replace_or_add_env "DB_DATABASE" "$DB_DATABASE"
+replace_or_add_env "DB_USERNAME" "$DB_USERNAME"
+replace_or_add_env "DB_PASSWORD" "$DB_PASSWORD"
 
 echo "✅ Configuración de BD: MariaDB ($DB_HOST:$DB_PORT/$DB_DATABASE)"
 
