@@ -21,8 +21,8 @@ Laravel requiere directorios específicos en `storage/framework/` con permisos d
 
 ```bash
 # En el directorio raíz del proyecto
-chmod +x fix-codespace-storage.sh
-./fix-codespace-storage.sh
+chmod +x scripts/fix-codespace-storage.sh
+./scripts/fix-codespace-storage.sh
 ```
 
 ### Opción 2: Comandos Manuales
@@ -57,7 +57,7 @@ sudo chmod -R 775 src/bootstrap/cache
 1. **Crear nuevo Codespace**
 2. **Ejecutar fix automático:**
    ```bash
-   ./fix-codespace-storage.sh
+   ./scripts/fix-codespace-storage.sh
    ```
 3. **Iniciar servicios:**
    ```bash
@@ -147,7 +147,7 @@ Si el problema persiste:
 
 | Script | Propósito | Plataforma |
 |--------|-----------|------------|
-| `fix-codespace-storage.sh` | Fix rápido para Codespaces | Linux/Mac |
+| `scripts/fix-codespace-storage.sh` | Fix rápido para Codespaces | Linux/Mac |
 | `scripts/fix-storage-permissions.sh` | Fix completo con verificación | Linux/Mac |
 | `scripts/Fix-StoragePermissions.ps1` | Fix para Windows | PowerShell |
 

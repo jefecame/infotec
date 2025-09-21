@@ -58,7 +58,13 @@ infotec/
 │   ├── routes/api.php     # Rutas API (/api/eventos, /api/ponentes)
 │   └── artisan            # CLI de Laravel
 ├── 📁 docs/               # Documentación y diagramas
-│   └── models-diagram-basic.puml  # Diagrama PlantUML
+│   ├── models-diagram-basic.puml  # Diagrama PlantUML
+│   └── STORAGE-FIX.md     # Guía para fix de storage
+├── 📁 scripts/            # Scripts de utilidades
+│   ├── laravel-startup.sh         # Script de inicio del contenedor
+│   ├── fix-codespace-storage.sh   # Fix rápido Codespaces
+│   ├── fix-storage-permissions.sh # Fix completo Linux
+│   └── Fix-StoragePermissions.ps1 # Fix para Windows
 ├── 📁 database/           # Scripts SQL y datos de prueba
 ├── 🐳 docker-compose.yml  # Orquestación de servicios
 └── 📄 README.md           # Esta documentación
@@ -191,8 +197,8 @@ Al ejecutar `docker compose -d`, el sistema:
 **Solución rápida**:
 ```bash
 # Fix automático para Codespaces
-chmod +x fix-codespace-storage.sh
-./fix-codespace-storage.sh
+chmod +x scripts/fix-codespace-storage.sh
+./scripts/fix-codespace-storage.sh
 
 # Luego iniciar servicios
 docker compose up -d
@@ -229,6 +235,8 @@ docker compose down -v && docker compose up -d
 - 🐳 [Docker Compose](https://docs.docker.com/compose/)
 - 🎨 [PlantUML](https://plantuml.com/) - Diagramas como código
 - 🌐 [GitHub Codespaces](https://github.com/features/codespaces)
+- 📜 [Documentación de Scripts](docs/SCRIPTS.md) - Guía completa de scripts
+- 🔧 [Fix de Storage](docs/STORAGE-FIX.md) - Solución para problemas de cache
 
 ## 🔒 Seguridad
 

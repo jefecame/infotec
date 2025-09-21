@@ -4,16 +4,21 @@
 # INFOTEC - Quick Fix for Codespaces Storage Issue
 # =============================================================================
 # PURPOSE: Fix "Please provide a valid cache path" error in Codespaces
-# USAGE: ./fix-codespace-storage.sh
+# USAGE: ./scripts/fix-codespace-storage.sh
 # =============================================================================
 
 echo "🚀 INFOTEC - Quick Fix for Codespaces Storage Issue"
 
-# Check if src directory exists
+# Check if we're in the correct directory
 if [ ! -d "src" ]; then
-    echo "❌ src directory not found. Are you in the project root?"
+    echo "❌ src directory not found. Please run this script from the project root."
+    echo "📍 Current directory: $(pwd)"
+    echo "📁 Expected structure: ./src/"
     exit 1
 fi
+
+echo "📁 Working from project root: $(pwd)"
+echo "📍 Target Laravel directory: ./src/"
 
 cd src
 
