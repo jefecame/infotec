@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Conversión automática de saltos de línea CRLF a LF si es necesario
+sed -i 's/\r$//' "$0"
+
 # =============================================================================
 # INFOTEC - Laravel Container Startup Script
 # =============================================================================

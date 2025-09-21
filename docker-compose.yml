@@ -41,7 +41,9 @@ services:
   # APLICACIÓN LARAVEL CON CREACIÓN AUTOMÁTICA
   # ============================================
   laravel:
-    image: bitnami/laravel:11
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: infotec_laravel
     environment:
       # Variables específicas de Bitnami
@@ -52,7 +54,7 @@ services:
       - LARAVEL_DATABASE_USER=${MARIADB_USER}
       - LARAVEL_DATABASE_PASSWORD=${MARIADB_PASSWORD}
       - LARAVEL_VERSION=${LARAVEL_VERSION:-11.*}
-      
+
       # Variables para Laravel .env
       - DB_CONNECTION=${DB_CONNECTION:-mysql}
       - DB_HOST=${DB_HOST:-mariadb}
@@ -60,7 +62,7 @@ services:
       - DB_DATABASE=${DB_DATABASE:-${MARIADB_DATABASE}}
       - DB_USERNAME=${DB_USERNAME:-${MARIADB_USER}}
       - DB_PASSWORD=${DB_PASSWORD:-${MARIADB_PASSWORD}}
-      
+
       # Configuración PHP
       - PHP_MEMORY_LIMIT=256M
       - PHP_MAX_EXECUTION_TIME=300
@@ -68,7 +70,6 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/app
-      - ./scripts:/app/scripts
       - vendor_data:/app/vendor
       - composer_cache:/root/.composer/cache
     command: ["/bin/bash", "/app/scripts/laravel-startup.sh"]
@@ -85,7 +86,6 @@ services:
       retries: 3
       start_period: 60s
 
-
 # =============================================================================
 # VOLÚMENES PERSISTENTES
 # =============================================================================
@@ -93,11 +93,11 @@ volumes:
   mariadb_data:
     driver: local
     # Persistencia de datos de MariaDB (volumen Docker gestionado)
-  
+
   vendor_data:
     driver: local
     # Carpeta vendor de Composer para rendimiento (ESENCIAL en Windows)
-    
+
   composer_cache:
     driver: local
     # Cache de Composer para acelerar instalaciones
@@ -109,4 +109,3 @@ networks:
   laravel-network:
     driver: bridge
     # Red interna para comunicación entre contenedores
-    
