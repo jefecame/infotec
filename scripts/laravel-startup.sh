@@ -231,7 +231,7 @@ else
 fi
 
 # =============================================================================
-# START LARAVEL DEVELOPMENT SERVER
+# START LARAVEL DEVELOPMENT SERVER 
 # =============================================================================
 
 echo "✅ Configuración completada exitosamente"
