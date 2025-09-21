@@ -41,9 +41,7 @@ services:
   # APLICACIÓN LARAVEL CON CREACIÓN AUTOMÁTICA
   # ============================================
   laravel:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: jefecame/infotec-laravel:latest
     container_name: infotec_laravel
     environment:
       # Variables específicas de Bitnami
