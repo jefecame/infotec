@@ -59,7 +59,7 @@ infotec/
 │   └── artisan            # CLI de Laravel
 ├── 📁 docs/               # Documentación y diagramas
 │   ├── models-diagram-basic.puml  # Diagrama PlantUML
-│   └── STORAGE-FIX.md     # Guía para fix de storage
+│   └── SCRIPTS.md         # Documentación de scripts
 ├── 📁 scripts/            # Scripts de utilidades
 │   └── laravel-startup.sh         # Script de inicio del contenedor
 ├── 📁 database/           # Scripts SQL y datos de prueba
