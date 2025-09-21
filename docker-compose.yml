@@ -125,9 +125,42 @@ services:
         # Migrar base de datos
         php artisan migrate --force
         
-        # Configurar permisos
-        chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+        # CREAR Y CONFIGURAR DIRECTORIOS DE STORAGE (FIX PARA CODESPACES)
+        echo '📁 Creando directorios de storage requeridos...'
+        mkdir -p storage/framework/{cache,sessions,testing,views}
+        mkdir -p storage/framework/cache/data
+        mkdir -p storage/logs
+        mkdir -p storage/app/{private,public}
+        mkdir -p bootstrap/cache
         
+        # Crear archivos .gitignore para preservar estructura
+        echo '*' > storage/framework/cache/data/.gitignore
+        echo '!.gitignore' >> storage/framework/cache/data/.gitignore
+        echo '*' > storage/framework/sessions/.gitignore
+        echo '!.gitignore' >> storage/framework/sessions/.gitignore
+        echo '*' > storage/framework/testing/.gitignore
+        echo '!.gitignore' >> storage/framework/testing/.gitignore
+        echo '*' > storage/framework/views/.gitignore
+        echo '!.gitignore' >> storage/framework/views/.gitignore
+        echo '*' > storage/logs/.gitignore
+        echo '!.gitignore' >> storage/logs/.gitignore
+        echo '*' > bootstrap/cache/.gitignore
+        echo '!.gitignore' >> bootstrap/cache/.gitignore
+        
+        # Configurar permisos (FIX PARA CODESPACES)
+        echo '🔐 Configurando permisos de storage...'
+        find storage -type d -exec chmod 775 {} \; 2>/dev/null || chmod -R 775 storage
+        find storage -type f -exec chmod 664 {} \; 2>/dev/null || chmod -R 664 storage/*/
+        find bootstrap/cache -type d -exec chmod 775 {} \; 2>/dev/null || chmod -R 775 bootstrap/cache
+        find bootstrap/cache -type f -exec chmod 664 {} \; 2>/dev/null || chmod -R 664 bootstrap/cache/
+        
+        # Limpiar cache existente para evitar problemas
+        echo '🧹 Limpiando cache existente...'
+        php artisan config:clear 2>/dev/null || true
+        php artisan cache:clear 2>/dev/null || true
+        php artisan view:clear 2>/dev/null || true
+        
+        echo '✅ Directorios de storage configurados correctamente'
         echo '🎉 Laravel listo en http://localhost:8000'
         
         # Iniciar servidor

@@ -184,8 +184,23 @@ Al ejecutar `docker compose -d`, el sistema:
 
 ## 🛠️ Solución de Problemas
 
-### Verificación 
+### ⚠️ Error "Please provide a valid cache path" (Codespaces)
 
+**Síntoma**: Error al acceder a `localhost:8000` en nuevo Codespace
+
+**Solución rápida**:
+```bash
+# Fix automático para Codespaces
+chmod +x fix-codespace-storage.sh
+./fix-codespace-storage.sh
+
+# Luego iniciar servicios
+docker compose up -d
+```
+
+> 📖 **Documentación completa**: [docs/STORAGE-FIX.md](docs/STORAGE-FIX.md)
+
+### Verificación General
 ```bash
 # Estado de servicios
 docker compose ps
@@ -195,6 +210,7 @@ curl http://localhost:8000/api/eventos
 
 # Ver logs si hay problemas
 docker compose logs -f laravel
+```
 ```
 
 ### Reinicio Completo
