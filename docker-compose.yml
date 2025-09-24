@@ -11,7 +11,7 @@ services:
   # BASE DE DATOS MARIADB
   # ============================================
   mariadb:
-    image: bitnami/mariadb:11.4
+    image: bitnami/mariadb:latest
     container_name: infotec_mariadb
     environment:
       - ALLOW_EMPTY_PASSWORD=no

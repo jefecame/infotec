@@ -1,5 +1,5 @@
 # Dockerfile personalizado para Laravel
-FROM bitnami/laravel:11
+FROM bitnami/laravel:latest
 
 # Copia el script de inicio personalizado
 COPY /src/scripts/laravel-startup.sh /app/scripts/laravel-startup.sh
