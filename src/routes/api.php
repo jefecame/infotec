@@ -2,45 +2,59 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+// Agregar el controlador EventoController
 use App\Http\Controllers\EventoController;
+// Agregar el controlador PonenteController
 use App\Http\Controllers\PonenteController;
+// Agregar el controlador AsistenteController
 use App\Http\Controllers\AsistenteController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
-
-/**
-* Rutas para el recurso Evento.
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+| Aquí es donde puedes registrar las rutas de la API para tu aplicación.
+| Estas rutas son cargadas por el RouteServiceProvider.
 */
 
-// Recuperar todos los eventos
+/*
+|--------------------------------------------------------------------------
+| Rutas públicas (no requieren autenticación)
+|--------------------------------------------------------------------------
+*/
+// Evento: listar, ver
 Route::get('/eventos', [EventoController::class, 'index']);
-// Almacenar un evento nuevo
-Route::post('/eventos', [EventoController::class, 'store']);
-// Recuperar un evento específico
 Route::get('/eventos/{id}', [EventoController::class, 'show']);
-// Actualizar un evento específico
-Route::put('/eventos/{evento}', [EventoController::class, 'update']);
-// Eliminar un evento específico
-Route::delete('/eventos/{id}', [EventoController::class, 'destroy']);
 
-/**
-* Rutas para el recurso Ponente.
-*/
-
+// Ponente: listar, ver
 Route::get('/ponentes', [PonenteController::class, 'index']);
-Route::post('/ponentes', [PonenteController::class, 'store']);
 Route::get('/ponentes/{id}', [PonenteController::class, 'show']);
-Route::put('/ponentes/{ponente}', [PonenteController::class, 'update']);
-Route::delete('/ponentes/{id}', [PonenteController::class, 'destroy']);
 
-/**
-* Rutas para el recurso Asistente.
+/*
+|--------------------------------------------------------------------------
+| Rutas privadas (requieren autenticación)
+|--------------------------------------------------------------------------
 */
+Route::middleware('auth:api')->group(function () {
+    // Evento: crear, actualizar, eliminar
+    Route::post('/eventos', [EventoController::class, 'store']);
+    Route::put('/eventos/{evento}', [EventoController::class, 'update']);
+    Route::delete('/eventos/{id}', [EventoController::class, 'destroy']);
 
-Route::get('/asistentes', [AsistenteController::class, 'index']);
-Route::post('/asistentes', [AsistenteController::class, 'store']);
-Route::get('/asistentes/{id}', [AsistenteController::class, 'show']);
-Route::put('/asistentes/{asistente}', [AsistenteController::class, 'update']);
-Route::delete('/asistentes/{id}', [AsistenteController::class, 'destroy']);
+    // Ponente: crear, actualizar, eliminar
+    Route::post('/ponentes', [PonenteController::class, 'store']);
+    Route::put('/ponentes/{ponente}', [PonenteController::class, 'update']);
+    Route::delete('/ponentes/{id}', [PonenteController::class, 'destroy']);
+
+    // Asistentes: listar, crear, ver, actualizar, eliminar
+    Route::get('/asistentes', [AsistenteController::class, 'index']);
+    Route::post('/asistentes', [AsistenteController::class, 'store']);
+    Route::get('/asistentes/{id}', [AsistenteController::class, 'show']);
+    Route::put('/asistentes/{asistente}', [AsistenteController::class, 'update']);
+    Route::delete('/asistentes/{id}', [AsistenteController::class, 'destroy']);
+
+    // Usuario autenticado
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+});
