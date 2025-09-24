@@ -8,11 +8,22 @@ COPY /src/scripts/laravel-startup.sh /app/scripts/laravel-startup.sh
 RUN chmod +x /app/scripts/laravel-startup.sh
 
 # Puedes instalar dependencias adicionales aquí si lo necesitas
-RUN npm install -g npm@latest
-
 RUN apt-get update && apt-get install -y unzip
 
-#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=
+# Actualiza Composer a su última versión
+RUN composer self-update
+
+# Actualiza npm a su última versión
+RUN npm install -g npm@latest
+
+# Instala las dependencias de Composer
+RUN composer update
+
+# Instala las dependencias de npm
+RUN npm install
+
+# Actualiza las dependencias de npm
+RUN npm update
 
 # Comando de inicio
 CMD ["/bin/bash", "/app/scripts/laravel-startup.sh"]
