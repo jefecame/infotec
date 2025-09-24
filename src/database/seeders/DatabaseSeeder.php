@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\SqlSeedSeeder;
 use Database\Seeders\TestDataSeeder;
+use Database\Seeders\InitialSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,7 +26,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // Ejecutar SQL seed idempotente y el seeder de prueba
+        // Ejecutar SQL sql/seed_initial.sql
         $this->call([InitialSeeder::class]);
     }
 }
