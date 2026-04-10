@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Prueba 01
+     * Prueba 02
      */
 
 namespace App\Http\Controllers;
